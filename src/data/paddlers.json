@@ -1,0 +1,2536 @@
+[
+    {
+        "name": "Victor Taing",
+        "gender": "male",
+        "bodyWeight": 167.7,
+        "mobilityHipFlexion": "Bonus",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 335,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": {
+            "weight": 165,
+            "reps": null
+        },
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 20,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 215,
+            "time": 8
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 57
+        },
+        "pushupsDips": {
+            "pts": 2.5,
+            "reps": 34,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3,
+            "value": 3030,
+            "type": "run",
+            "details": "3.03km"
+        },
+        "totalPts": 18
+    },
+    {
+        "name": "Myriam Gallant",
+        "gender": "female",
+        "bodyWeight": 165,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 1,
+            "exercise": "Core",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 1.5,
+            "reps": null,
+            "holdTime": 45,
+            "type": "chin-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 95,
+            "time": 10
+        },
+        "hsr": {
+            "pts": 1,
+            "reps": 33
+        },
+        "pushupsDips": {
+            "pts": 2,
+            "reps": 14,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 3.5,
+            "value": "8:01",
+            "type": "erg",
+            "details": "2km in 8:01"
+        },
+        "totalPts": 12
+    },
+    {
+        "name": "Christine Wu",
+        "gender": "female",
+        "bodyWeight": null,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 4,
+            "reps": 15,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 115,
+            "time": 10
+        },
+        "hsr": {
+            "pts": 2.5,
+            "reps": 48
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 30,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2310,
+            "type": "run",
+            "details": "2.31km"
+        },
+        "totalPts": 17.5
+    },
+    {
+        "name": "Ceres Brunet",
+        "gender": "female",
+        "bodyWeight": 134,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 7,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 105,
+            "time": 8.4
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 42
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 31,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2510,
+            "type": "run",
+            "details": "2.51km"
+        },
+        "totalPts": 16.5
+    },
+    {
+        "name": "Yi Chen Shao",
+        "gender": "male",
+        "bodyWeight": 170,
+        "mobilityHipFlexion": "Bonus",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 340,
+            "reps": 5,
+            "isBonus": true
+        },
+        "hangCleans": {
+            "weight": 170,
+            "reps": null
+        },
+        "core": {
+            "level": 3,
+            "exercise": "Core Level 3",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 3.5,
+            "reps": 30,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 4,
+            "lbs": 245,
+            "time": 9
+        },
+        "hsr": {
+            "pts": 3.5,
+            "reps": 78
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 45,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3.5,
+            "value": 3170,
+            "type": "run",
+            "details": "3.17km"
+        },
+        "totalPts": 23.5
+    },
+    {
+        "name": "William Kallianiotis",
+        "gender": "male",
+        "bodyWeight": 210,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 315,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 4,
+            "exercise": "Standing Ab Wheel",
+            "reps": 5
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 22,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 4,
+            "lbs": 245,
+            "time": null
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": null
+        },
+        "pushupsDips": {
+            "pts": 3.5,
+            "reps": 40,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3,
+            "value": "7:04",
+            "type": "erg",
+            "details": "2km in 7:04"
+        },
+        "totalPts": 21
+    },
+    {
+        "name": "Emily You",
+        "gender": "female",
+        "bodyWeight": null,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 4,
+            "reps": 15,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 115,
+            "time": 10
+        },
+        "hsr": {
+            "pts": 2.5,
+            "reps": 48
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 30,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2310,
+            "type": "run",
+            "details": "2.31km"
+        },
+        "totalPts": 18.5
+    },
+    {
+        "name": "Lucia Wang",
+        "gender": "female",
+        "bodyWeight": 135,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 135,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 1,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 1,
+            "lbs": 75,
+            "time": 9.48
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 40
+        },
+        "pushupsDips": {
+            "pts": 2.5,
+            "reps": 15,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 3.5,
+            "value": 2800,
+            "type": "run",
+            "details": "2.80km in 12min"
+        },
+        "totalPts": 14
+    },
+    {
+        "name": "Wei Heng Gao",
+        "gender": "male",
+        "bodyWeight": 170,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 255,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 23,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 215,
+            "time": 9
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 40
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 39,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2740,
+            "type": "run",
+            "details": "2.74km"
+        },
+        "totalPts": 15.5
+    },
+    {
+        "name": "Yiran Sun",
+        "gender": "female",
+        "bodyWeight": null,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 2,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 115,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2.5,
+            "reps": 49
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 24,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2620,
+            "type": "run",
+            "details": "2.62km"
+        },
+        "totalPts": 16
+    },
+    {
+        "name": "Richard Mou",
+        "gender": "male",
+        "bodyWeight": 170,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Superman on Rings",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 20,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 215,
+            "time": 10
+        },
+        "hsr": {
+            "pts": 3.5,
+            "reps": 68
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 35,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 4,
+            "value": 3250,
+            "type": "run",
+            "details": "3.25km in 12min"
+        },
+        "totalPts": 20
+    },
+    {
+        "name": "Helen Liu",
+        "gender": "female",
+        "bodyWeight": 135,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 135,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 2,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 105,
+            "time": 10
+        },
+        "hsr": {
+            "pts": 1.5,
+            "reps": 37
+        },
+        "pushupsDips": {
+            "pts": 3.5,
+            "reps": 25,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2250,
+            "type": "run",
+            "details": "2.25km"
+        },
+        "totalPts": 14.5
+    },
+    {
+        "name": "Michael Shan",
+        "gender": "male",
+        "bodyWeight": 190,
+        "mobilityHipFlexion": "Fail",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 285,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 15,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 4,
+            "lbs": 245,
+            "time": 10
+        },
+        "hsr": {
+            "pts": 3.25,
+            "reps": 67
+        },
+        "pushupsDips": {
+            "pts": 1.5,
+            "reps": 23,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 1.5,
+            "value": 2680,
+            "type": "run",
+            "details": "2.68km"
+        },
+        "totalPts": 15
+    },
+    {
+        "name": "Alice Chen",
+        "gender": "female",
+        "bodyWeight": 125,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 8,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 95,
+            "time": 9
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 40
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 30,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2410,
+            "type": "run",
+            "details": "2.41km"
+        },
+        "totalPts": 15.5
+    },
+    {
+        "name": "TongQing Liu",
+        "gender": "male",
+        "bodyWeight": 183,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 275,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Superman on Rings",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 1,
+            "reps": 8,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 200,
+            "time": 9.3
+        },
+        "hsr": {
+            "pts": 1.5,
+            "reps": 35
+        },
+        "pushupsDips": {
+            "pts": 1.5,
+            "reps": 20,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2740,
+            "type": "run",
+            "details": "2.74km"
+        },
+        "totalPts": 12.5
+    },
+    {
+        "name": "Maya Bickell",
+        "gender": "female",
+        "bodyWeight": 105,
+        "mobilityHipFlexion": null,
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": null,
+        "pullups": {
+            "pts": 3.5,
+            "reps": 14,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 105,
+            "time": null
+        },
+        "hsr": null,
+        "pushupsDips": null,
+        "cardio": {
+            "pts": 4,
+            "value": 2940,
+            "type": "run",
+            "details": "2.94km"
+        },
+        "totalPts": 11
+    },
+    {
+        "name": "Meng Jia Gu",
+        "gender": "female",
+        "bodyWeight": 150,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 155,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 5,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 105,
+            "time": 9
+        },
+        "hsr": {
+            "pts": 2.5,
+            "reps": 54
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 30,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2400,
+            "type": "run",
+            "details": "2.40km"
+        },
+        "totalPts": 16.5
+    },
+    {
+        "name": "Ken Ko Latchman",
+        "gender": "male",
+        "bodyWeight": 170,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 255,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Core Level 2",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 20,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 1.5,
+            "lbs": 170,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 40
+        },
+        "pushupsDips": {
+            "pts": 2.5,
+            "reps": 30,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3.5,
+            "value": 3200,
+            "type": "run",
+            "details": "3.2km"
+        },
+        "totalPts": 15
+    },
+    {
+        "name": "Danny Nguyen",
+        "gender": "male",
+        "bodyWeight": 153,
+        "mobilityHipFlexion": "Fail",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 230,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 4,
+            "exercise": "Core Level 4",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 17,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 200,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 40
+        },
+        "pushupsDips": {
+            "pts": 3.5,
+            "reps": 40,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2720,
+            "type": "run",
+            "details": "2.72km"
+        },
+        "totalPts": 17
+    },
+    {
+        "name": "Vincent Ngo",
+        "gender": "male",
+        "bodyWeight": 163,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 245,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Core Level 3",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 22,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 215,
+            "time": 10
+        },
+        "hsr": {
+            "pts": 2.5,
+            "reps": 48
+        },
+        "pushupsDips": {
+            "pts": 3.5,
+            "reps": 40,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 1.5,
+            "value": 2650,
+            "type": "run",
+            "details": "2.65km"
+        },
+        "totalPts": 17
+    },
+    {
+        "name": "Shung-Kwoon Jin",
+        "gender": "male",
+        "bodyWeight": 150,
+        "mobilityHipFlexion": "Bonus",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 315,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": {
+            "weight": 155,
+            "reps": null
+        },
+        "core": {
+            "level": 3,
+            "exercise": "TRX",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 3.5,
+            "reps": 31,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 200,
+            "time": 10
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 65
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 45,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 4,
+            "value": 3380,
+            "type": "run",
+            "details": "3.38km in 12min"
+        },
+        "totalPts": 22
+    },
+    {
+        "name": "Léa Tian",
+        "gender": "female",
+        "bodyWeight": 150,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 1,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 105,
+            "time": 8
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 43
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 23,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2230,
+            "type": "run",
+            "details": "2.23km"
+        },
+        "totalPts": 14.5
+    },
+    {
+        "name": "Ella Zheng",
+        "gender": "female",
+        "bodyWeight": 140,
+        "mobilityHipFlexion": "Bonus",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 205,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": {
+            "weight": 105,
+            "reps": null
+        },
+        "core": {
+            "level": 2,
+            "exercise": "Ab Roller",
+            "reps": 15
+        },
+        "pullups": {
+            "pts": 4,
+            "reps": 15,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 115,
+            "time": 10
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 55
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 20,
+            "type": "push-up"
+        },
+        "cardio": null,
+        "totalPts": 16.5
+    },
+    {
+        "name": "Alex",
+        "gender": "male",
+        "bodyWeight": 210,
+        "mobilityHipFlexion": "Fail",
+        "stabilityRotatorCuff": "Fail",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Core Level 3",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 18,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 205,
+            "time": null
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 55
+        },
+        "pushupsDips": {
+            "pts": 2,
+            "reps": 25,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": "7:29",
+            "type": "erg",
+            "details": "2km in 7:29"
+        },
+        "totalPts": 15
+    },
+    {
+        "name": "Dory Song",
+        "gender": "male",
+        "bodyWeight": 190,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Pass",
+        "deadlift": {
+            "weight": 275,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Core Level 3",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 3,
+            "reps": 29,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 185,
+            "time": null
+        },
+        "hsr": {
+            "pts": 3.5,
+            "reps": 68
+        },
+        "pushupsDips": {
+            "pts": 0,
+            "reps": 4,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2880,
+            "type": "run",
+            "details": "2.88km"
+        },
+        "totalPts": 14
+    },
+    {
+        "name": "Nicolas Taylor",
+        "gender": "male",
+        "bodyWeight": 178,
+        "mobilityHipFlexion": null,
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 4,
+            "exercise": "Core Level 4",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 18,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 185,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 42
+        },
+        "pushupsDips": {
+            "pts": 1.5,
+            "reps": 20,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3,
+            "value": 3120,
+            "type": "run",
+            "details": "3.12km"
+        },
+        "totalPts": 15.5
+    },
+    {
+        "name": "Mathieu Leong",
+        "gender": "male",
+        "bodyWeight": 143,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Core Level 2",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 26,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 185,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 41
+        },
+        "pushupsDips": {
+            "pts": 3.5,
+            "reps": 43,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2710,
+            "type": "run",
+            "details": "2.71km"
+        },
+        "totalPts": 14.5
+    },
+    {
+        "name": "Jimmy Xu",
+        "gender": "male",
+        "bodyWeight": 206,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 4,
+            "exercise": "Core Level 4",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 18,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 4,
+            "lbs": null,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2.5,
+            "reps": 48
+        },
+        "pushupsDips": {
+            "pts": 2,
+            "reps": 27,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 1.5,
+            "value": "7:42",
+            "type": "erg",
+            "details": "2km in 7:42"
+        },
+        "totalPts": 17
+    },
+    {
+        "name": "Jenny Mao",
+        "gender": "female",
+        "bodyWeight": 120,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 135,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 3.5,
+            "reps": 12,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 105,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 40
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 30,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2200,
+            "type": "run",
+            "details": "2.2km"
+        },
+        "totalPts": 17
+    },
+    {
+        "name": "Virginie Tran",
+        "gender": "female",
+        "bodyWeight": null,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 135,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 7,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 1,
+            "lbs": 75,
+            "time": 9.79
+        },
+        "hsr": {
+            "pts": 1,
+            "reps": 31
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 23,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2210,
+            "type": "run",
+            "details": "2.21km"
+        },
+        "totalPts": 12.5
+    },
+    {
+        "name": "David Vu",
+        "gender": "male",
+        "bodyWeight": 160,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 245,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Core Level 2",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 22,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 195,
+            "time": 10
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 65
+        },
+        "pushupsDips": {
+            "pts": 2,
+            "reps": 25,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3,
+            "value": 3060,
+            "type": "run",
+            "details": "3.06km"
+        },
+        "totalPts": 15.5
+    },
+    {
+        "name": "Emma Zhou",
+        "gender": "female",
+        "bodyWeight": 135,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 135,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 3.5,
+            "reps": 12,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 115,
+            "time": 7.82
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 58
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 30,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 3,
+            "value": 2734,
+            "type": "run",
+            "details": "2.734km"
+        },
+        "totalPts": 19.5
+    },
+    {
+        "name": "Nancy Zheng",
+        "gender": "female",
+        "bodyWeight": 170,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 170,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 7,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 115,
+            "time": null
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 55
+        },
+        "pushupsDips": {
+            "pts": 2,
+            "reps": 10,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": "8:24",
+            "type": "erg",
+            "details": "2:06 split (8:24 total)"
+        },
+        "totalPts": 16
+    },
+    {
+        "name": "Lucia Zhu",
+        "gender": "female",
+        "bodyWeight": 110,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 135,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 3,
+            "reps": 10,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 1,
+            "lbs": 75,
+            "time": null
+        },
+        "hsr": {
+            "pts": 1.5,
+            "reps": 36
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 24,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2510,
+            "type": "run",
+            "details": "2.51km"
+        },
+        "totalPts": 14
+    },
+    {
+        "name": "Nathan Nguyen",
+        "gender": "male",
+        "bodyWeight": 155,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 235,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Core Level 3",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 20,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 205,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2.5,
+            "reps": 48
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 46,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3.5,
+            "value": 3220,
+            "type": "run",
+            "details": "3.22km"
+        },
+        "totalPts": 19
+    },
+    {
+        "name": "Wendi Huo",
+        "gender": "female",
+        "bodyWeight": 132,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 135,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 3,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 1.5,
+            "lbs": 85,
+            "time": null
+        },
+        "hsr": {
+            "pts": 1,
+            "reps": 31
+        },
+        "pushupsDips": {
+            "pts": 2.5,
+            "reps": 16,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 1.5,
+            "value": 2020,
+            "type": "run",
+            "details": "2.02km"
+        },
+        "totalPts": 11.5
+    },
+    {
+        "name": "Cassandra Duong",
+        "gender": "female",
+        "bodyWeight": 125,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 135,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 3,
+            "reps": 9,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 95,
+            "time": 8.5
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 40
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 30,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2435,
+            "type": "run",
+            "details": "2.43-2.44km"
+        },
+        "totalPts": 16
+    },
+    {
+        "name": "Bryana Sansalone",
+        "gender": "female",
+        "bodyWeight": 140,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 140,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 3,
+            "reps": 10,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 115,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2.5,
+            "reps": null
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 20,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 4,
+            "value": 2946,
+            "type": "run",
+            "details": "1.83 miles"
+        },
+        "totalPts": 18.5
+    },
+    {
+        "name": "Holly Wei",
+        "gender": "female",
+        "bodyWeight": 145,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 145,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 7,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 95,
+            "time": 8.7
+        },
+        "hsr": {
+            "pts": 1,
+            "reps": 30
+        },
+        "pushupsDips": {
+            "pts": 2,
+            "reps": 12,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2500,
+            "type": "run",
+            "details": "2.50km"
+        },
+        "totalPts": 14
+    },
+    {
+        "name": "Zhan Lang Cheung",
+        "gender": "male",
+        "bodyWeight": 165,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 250,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Core Level 3",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 3,
+            "reps": 27,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 200,
+            "time": null
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 55
+        },
+        "pushupsDips": {
+            "pts": 3.5,
+            "reps": 40,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 4,
+            "value": 3283,
+            "type": "run",
+            "details": "3.283km"
+        },
+        "totalPts": 20
+    },
+    {
+        "name": "Mikale Hum",
+        "gender": "female",
+        "bodyWeight": 136,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 145,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 5,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 105,
+            "time": 8.94
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 43
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 20,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2600,
+            "type": "run",
+            "details": "2.6km"
+        },
+        "totalPts": 15.5
+    },
+    {
+        "name": "William Kiem",
+        "gender": "male",
+        "bodyWeight": 162,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 240,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 3,
+            "reps": 27,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 200,
+            "time": 9
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 57
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 36,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3.5,
+            "value": 3130,
+            "type": "run",
+            "details": "3.13km"
+        },
+        "totalPts": 18
+    },
+    {
+        "name": "David Namgung",
+        "gender": "male",
+        "bodyWeight": 130,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 225,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Core Level 3",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 4,
+            "reps": 35,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 200,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2.5,
+            "reps": 40
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 35,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2910,
+            "type": "run",
+            "details": "2.91km"
+        },
+        "totalPts": 18.5
+    },
+    {
+        "name": "Mykevin Gosselin",
+        "gender": "male",
+        "bodyWeight": 188,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 225,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 14,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": null,
+        "hsr": {
+            "pts": 2.5,
+            "reps": 48
+        },
+        "pushupsDips": {
+            "pts": 2,
+            "reps": 25,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2970,
+            "type": "run",
+            "details": "2.97km"
+        },
+        "totalPts": 12
+    },
+    {
+        "name": "Da Zhuo Xie",
+        "gender": "male",
+        "bodyWeight": 167,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 255,
+            "reps": 6,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Superman on Rings",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 16,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 215,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 40
+        },
+        "pushupsDips": {
+            "pts": 2.5,
+            "reps": 32,
+            "type": "dip"
+        },
+        "cardio": null,
+        "totalPts": 13.5
+    },
+    {
+        "name": "May Sun",
+        "gender": "female",
+        "bodyWeight": 160,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 4,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 115,
+            "time": null
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 44
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 20,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2220,
+            "type": "run",
+            "details": "2.22km"
+        },
+        "totalPts": 15
+    },
+    {
+        "name": "Orlando Qiu",
+        "gender": "male",
+        "bodyWeight": 172,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Pass",
+        "deadlift": {
+            "weight": 260,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Core Level 3",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 3,
+            "reps": 28,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 4,
+            "lbs": 245,
+            "time": null
+        },
+        "hsr": {
+            "pts": 3.5,
+            "reps": 68
+        },
+        "pushupsDips": {
+            "pts": 2.5,
+            "reps": 30,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3,
+            "value": 3000,
+            "type": "run",
+            "details": "3km"
+        },
+        "totalPts": 19
+    },
+    {
+        "name": "Mandy Xiao",
+        "gender": "female",
+        "bodyWeight": null,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 145,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 1,
+            "exercise": "Plank",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 1,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 95,
+            "time": null
+        },
+        "hsr": {
+            "pts": 1.5,
+            "reps": 35
+        },
+        "pushupsDips": {
+            "pts": 2,
+            "reps": 10,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2520,
+            "type": "run",
+            "details": "2.52km"
+        },
+        "totalPts": 12
+    },
+    {
+        "name": "Jiaxing Miao",
+        "gender": "male",
+        "bodyWeight": 215,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": null,
+        "deadlift": {
+            "weight": 320,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 4,
+            "exercise": "Standing Ab Wheel",
+            "reps": 5
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 17,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3.5,
+            "lbs": 230,
+            "time": null
+        },
+        "hsr": {
+            "pts": 4,
+            "reps": 81
+        },
+        "pushupsDips": {
+            "pts": 2,
+            "reps": 27,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2870,
+            "type": "run",
+            "details": "2.87km"
+        },
+        "totalPts": 18
+    },
+    {
+        "name": "Marie-Ève Hebert",
+        "gender": "female",
+        "bodyWeight": 127,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 135,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Core Level 3",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 8,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 105,
+            "time": 9
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 41
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "reps": 30,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2480,
+            "type": "run",
+            "details": "2.48km"
+        },
+        "totalPts": 17
+    },
+    {
+        "name": "Olivia Zhou",
+        "gender": "female",
+        "bodyWeight": 150,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 150,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 5,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 115,
+            "time": null
+        },
+        "hsr": {
+            "pts": 1.5,
+            "reps": 36
+        },
+        "pushupsDips": {
+            "pts": 2.5,
+            "reps": 15,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2470,
+            "type": "run",
+            "details": "2.47km"
+        },
+        "totalPts": 15
+    },
+    {
+        "name": "Andy Li",
+        "gender": "male",
+        "bodyWeight": 165,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 250,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 4,
+            "exercise": "Standing Ab Wheel",
+            "reps": 5
+        },
+        "pullups": {
+            "pts": 3,
+            "reps": 27,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 205,
+            "time": 9
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 56
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 35,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3,
+            "value": 3000,
+            "type": "run",
+            "details": "3km at 15km/hr"
+        },
+        "totalPts": 19.5
+    },
+    {
+        "name": "Hugo Gelinas",
+        "gender": "male",
+        "bodyWeight": 183,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 360,
+            "reps": 5,
+            "isBonus": true
+        },
+        "hangCleans": {
+            "weight": 185,
+            "reps": null
+        },
+        "core": {
+            "level": 4,
+            "exercise": "Core Level 4",
+            "reps": null
+        },
+        "pullups": {
+            "pts": 4,
+            "reps": 35,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 4,
+            "lbs": 245,
+            "time": null
+        },
+        "hsr": {
+            "pts": 4,
+            "reps": 80
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 35,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3.5,
+            "value": 3160,
+            "type": "run",
+            "details": "3.16km"
+        },
+        "totalPts": 24.5
+    },
+    {
+        "name": "Eric Wang",
+        "gender": "male",
+        "bodyWeight": null,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Core Level 3",
+            "reps": null
+        },
+        "pullups": null,
+        "benchPress": {
+            "pts": 4,
+            "lbs": null,
+            "time": null
+        },
+        "hsr": {
+            "pts": 3.5,
+            "reps": 70
+        },
+        "pushupsDips": {
+            "pts": 4,
+            "lbs": null,
+            "time": null
+        },
+        "cardio": {
+            "pts": 2.5,
+            "value": 2860,
+            "type": "run",
+            "details": "14.3km/h for 12min"
+        },
+        "totalPts": 18
+    },
+    {
+        "name": "Yu Hua Yang",
+        "gender": "male",
+        "bodyWeight": 196,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 295,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 3,
+            "exercise": "Superman on Rings",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2,
+            "reps": 15,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 3,
+            "lbs": 215,
+            "time": 8
+        },
+        "hsr": {
+            "pts": 3,
+            "reps": 55
+        },
+        "pushupsDips": {
+            "pts": 2.5,
+            "reps": 30,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 3,
+            "value": "7:14.3",
+            "type": "erg",
+            "details": "7:14.3 total time"
+        },
+        "totalPts": 17.5
+    },
+    {
+        "name": "Gerry Xiao",
+        "gender": "male",
+        "bodyWeight": 145,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 290,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": {
+            "weight": 145,
+            "reps": null
+        },
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 3,
+            "reps": 27,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2.5,
+            "lbs": 200,
+            "time": 9
+        },
+        "hsr": {
+            "pts": 2,
+            "reps": 40
+        },
+        "pushupsDips": {
+            "pts": 3.5,
+            "reps": 42,
+            "type": "dip"
+        },
+        "cardio": {
+            "pts": 1,
+            "value": 2580,
+            "type": "run",
+            "details": "2.58km"
+        },
+        "totalPts": 16
+    },
+    {
+        "name": "Polina Ginju",
+        "gender": "female",
+        "bodyWeight": null,
+        "mobilityHipFlexion": null,
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": null,
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Ab Rollouts",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 5,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 95,
+            "time": null
+        },
+        "hsr": {
+            "pts": 1.5,
+            "reps": 35
+        },
+        "pushupsDips": {
+            "pts": 2.5,
+            "reps": 15,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": null,
+            "type": "run",
+            "details": "2.something km"
+        },
+        "totalPts": 13
+    },
+    {
+        "name": "Emma Ding",
+        "gender": "female",
+        "bodyWeight": 118,
+        "mobilityHipFlexion": "Pass",
+        "stabilityRotatorCuff": "Bonus",
+        "deadlift": {
+            "weight": 135,
+            "reps": 5,
+            "isBonus": false
+        },
+        "hangCleans": null,
+        "core": {
+            "level": 2,
+            "exercise": "Kneeling Ab Wheel",
+            "reps": 10
+        },
+        "pullups": {
+            "pts": 2.5,
+            "reps": 8,
+            "holdTime": null,
+            "type": "pull-up"
+        },
+        "benchPress": {
+            "pts": 2,
+            "lbs": 100,
+            "time": null
+        },
+        "hsr": {
+            "pts": 1.5,
+            "reps": 36
+        },
+        "pushupsDips": {
+            "pts": 3,
+            "reps": 22,
+            "type": "push-up"
+        },
+        "cardio": {
+            "pts": 2,
+            "value": 2250,
+            "type": "run",
+            "details": "2.25km"
+        },
+        "totalPts": 14
+    }
+]

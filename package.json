@@ -1,0 +1,28 @@
+{
+  "name": "ready-ready",
+  "version": "1.0.0",
+  "description": "A small database of true grit paddlers and others to track fitness progress",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "date-fns": "^4.1.0",
+    "framer-motion": "^12.34.5",
+    "lucide-react": "^0.576.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "recharts": "^3.7.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  }
+}
