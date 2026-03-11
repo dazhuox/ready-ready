@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, User, Bot, Upload, X, Check, Save, Info, Download, ShieldCheck } from 'lucide-react';
+import { Send, User, Bot, Upload, X, Save, Download, ShieldCheck } from 'lucide-react';
 import { FitnessMetrics } from '../data/types';
 import { parseRawFitnessData } from '../utils/parser';
 import { getGeminiResponse, createChatbotContext } from '../data/gemini';
@@ -18,7 +18,6 @@ const BotUI = () => {
     const [isAdmin, setIsAdmin] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Check for admin mode in URL
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         if (params.get('mode') === 'admin') {
@@ -48,7 +47,7 @@ const BotUI = () => {
         }
 
         try {
-            setMessages(prev => [...prev, { role: 'bot', content: '...' }]); // Loading state
+            setMessages(prev => [...prev, { role: 'bot', content: '...' }]);
             const response = await getGeminiResponse(apiKey, userMsg, [...messages, { role: 'user', content: userMsg }], paddlers);
 
             setMessages(prev => {
@@ -84,13 +83,18 @@ const BotUI = () => {
     };
 
     return (
-        <div className="flex flex-col h-[600px] w-full max-w-4xl mx-auto glass-panel overflow-hidden border-none shadow-2xl">
+        <div className="flex flex-col h-[600px] w-full glass-panel overflow-hidden shadow-lg">
             {/* Header */}
-            <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
-                <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    <span className="font-semibold text-sm uppercase tracking-widest text-gray-400">The Ready Bot</span>
-                    {isAdmin && <span title="Admin Mode"><ShieldCheck size={16} className="text-red-500" /></span>}
+            <div className="px-5 py-4 border-b border-black/5 flex justify-between items-center bg-white/50">
+                <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-sage-500/15 flex items-center justify-center">
+                        <Bot size={16} className="text-sage-600" />
+                    </div>
+                    <div>
+                        <span className="font-semibold text-sm text-charcoal-800">The Ready Bot</span>
+                        {isAdmin && <ShieldCheck size={14} className="text-sage-500 inline ml-1.5" />}
+                    </div>
+                    <span className="w-2 h-2 rounded-full bg-sage-500 animate-soft-pulse" />
                 </div>
                 <div className="flex gap-2">
                     {isAdmin && (
@@ -98,21 +102,21 @@ const BotUI = () => {
                             <input
                                 type="password"
                                 placeholder="API Key Override"
-                                className="bg-black/20 border border-white/10 rounded px-2 py-1 text-xs outline-none focus:border-red-500/50"
+                                className="bg-cream-200/60 border border-black/8 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-sage-500/50 text-charcoal-800"
                                 value={apiKey}
                                 onChange={(e) => setApiKey(e.target.value)}
                             />
                             <button
                                 onClick={() => setShowIntake(true)}
-                                className="bg-red-600/20 text-red-500 text-xs px-3 py-1 rounded-full border border-red-600/30 hover:bg-red-600/30 transition-all flex items-center gap-1"
+                                className="bg-sage-500/12 text-sage-600 text-xs px-3 py-1.5 rounded-full border border-sage-500/20 hover:bg-sage-500/20 transition-all flex items-center gap-1 font-medium"
                             >
-                                <Upload size={14} /> Intake
+                                <Upload size={13} /> Intake
                             </button>
                             <button
                                 onClick={exportJSON}
-                                className="bg-blue-600/20 text-blue-500 text-xs px-3 py-1 rounded-full border border-blue-600/30 hover:bg-blue-600/30 transition-all flex items-center gap-1"
+                                className="bg-lavender-300/30 text-lavender-400 text-xs px-3 py-1.5 rounded-full border border-lavender-300/40 hover:bg-lavender-300/50 transition-all flex items-center gap-1 font-medium"
                             >
-                                <Download size={14} /> Export
+                                <Download size={13} /> Export
                             </button>
                         </>
                     )}
@@ -120,19 +124,28 @@ const BotUI = () => {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            <div className="flex-1 overflow-y-auto p-5 space-y-4 chat-scroll">
                 {messages.map((m, i) => (
                     <motion.div
-                        initial={{ opacity: 0, x: m.role === 'user' ? 20 : -20 }}
-                        animate={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.25 }}
                         key={i}
                         className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                         <div className={`flex gap-3 max-w-[80%] ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${m.role === 'user' ? 'bg-blue-600/30' : 'bg-red-600/30'}`}>
-                                {m.role === 'user' ? <User size={16} /> : <Bot size={16} />}
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                                m.role === 'user'
+                                    ? 'bg-sage-500/15 text-sage-600'
+                                    : 'bg-coral-300/40 text-coral-500'
+                            }`}>
+                                {m.role === 'user' ? <User size={15} /> : <Bot size={15} />}
                             </div>
-                            <div className={`p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${m.role === 'user' ? 'bg-blue-600/20 rounded-tr-none' : 'bg-white/5 rounded-tl-none border border-white/5'}`}>
+                            <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
+                                m.role === 'user'
+                                    ? 'bg-sage-500 text-white rounded-tr-sm shadow-sm'
+                                    : 'bg-cream-200/70 text-charcoal-800 rounded-tl-sm border border-black/5'
+                            }`}>
                                 {m.content}
                             </div>
                         </div>
@@ -142,18 +155,18 @@ const BotUI = () => {
             </div>
 
             {/* Input */}
-            <div className="p-4 border-t border-white/10 bg-white/5 flex gap-2">
+            <div className="px-4 py-3 border-t border-black/5 bg-white/50 flex gap-2.5">
                 <input
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                     placeholder="Ask a question about the team..."
-                    className="flex-1 bg-transparent border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-red-500/50 transition-colors"
+                    className="flex-1 bg-cream-100/80 border border-black/6 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-sage-500/40 focus:ring-2 focus:ring-sage-500/10 transition-all text-charcoal-800 placeholder-warmgray-400"
                 />
                 <button
                     onClick={handleSend}
-                    className="bg-red-600 text-white p-3 rounded-xl hover:bg-red-700 transition-colors"
+                    className="bg-sage-500 text-white p-3 rounded-xl hover:bg-sage-600 transition-colors shadow-sm"
                 >
                     <Send size={18} />
                 </button>
@@ -166,35 +179,37 @@ const BotUI = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-900/30 backdrop-blur-sm"
                     >
                         <motion.div
-                            initial={{ scale: 0.9, y: 20 }}
+                            initial={{ scale: 0.95, y: 12 }}
                             animate={{ scale: 1, y: 0 }}
-                            className="glass-panel w-full max-w-2xl border-white/20 p-8 space-y-4"
+                            className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 space-y-4 border border-black/5"
                         >
                             <div className="flex justify-between items-center">
-                                <h3 className="text-xl font-bold flex items-center gap-2">
-                                    <Upload className="text-red-500" /> Smart Data Intake
+                                <h3 className="text-xl font-bold flex items-center gap-2 text-charcoal-800">
+                                    <Upload className="text-sage-500" /> Smart Data Intake
                                 </h3>
-                                <button onClick={() => setShowIntake(false)} className="text-gray-400 hover:text-white">
+                                <button onClick={() => setShowIntake(false)} className="text-warmgray-400 hover:text-charcoal-700 bg-transparent border-none p-1">
                                     <X />
                                 </button>
                             </div>
-                            <p className="text-gray-400 text-sm">Paste raw text notes for a single paddler. The parser will extract all 2026 standardized metrics.</p>
+                            <p className="text-warmgray-500 text-sm">Paste raw text notes for a single paddler. The parser will extract all 2026 standardized metrics.</p>
                             <textarea
                                 value={rawIntake}
                                 onChange={(e) => setRawIntake(e.target.value)}
-                                className="w-full h-48 bg-black/40 border border-white/10 rounded-xl p-4 text-sm font-mono focus:outline-none focus:border-red-500/50 text-white"
+                                className="w-full h-48 bg-cream-100 border border-black/8 rounded-xl p-4 text-sm font-mono focus:outline-none focus:border-sage-500/50 focus:ring-2 focus:ring-sage-500/10 text-charcoal-800 resize-none"
                                 placeholder="Mobility - Hip Flexion: Bonus... Total: 18 pts"
                             />
-                            <div className="flex justify-end gap-3 pt-4">
-                                <button onClick={() => setShowIntake(false)} className="px-6 py-2 rounded-xl border border-white/10 text-gray-400 hover:bg-white/5">Cancel</button>
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button onClick={() => setShowIntake(false)} className="px-6 py-2.5 rounded-xl border border-black/8 text-warmgray-500 hover:bg-cream-100 bg-transparent transition-colors text-sm">
+                                    Cancel
+                                </button>
                                 <button
                                     onClick={handleIntakeSave}
-                                    className="px-6 py-2 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 flex items-center gap-2"
+                                    className="px-6 py-2.5 rounded-xl bg-sage-500 text-white font-semibold hover:bg-sage-600 flex items-center gap-2 transition-colors shadow-sm text-sm"
                                 >
-                                    <Save size={18} /> Parse & Save
+                                    <Save size={16} /> Parse & Save
                                 </button>
                             </div>
                         </motion.div>
