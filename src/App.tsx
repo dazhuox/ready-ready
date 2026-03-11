@@ -1,86 +1,215 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import BotUI from './components/BotUI'
 import {
     MessageSquare, Home, BarChart3, Users, Settings,
-    ChevronLeft, ChevronRight, Zap, TrendingUp, Shield, Info,
-    PanelLeftOpen, PanelLeftClose
+    PanelLeftOpen, PanelLeftClose, Plus, Menu
 } from 'lucide-react'
 
 const sidebarNavItems = [
-    { icon: MessageSquare, label: 'AI Chat', id: 'chat', active: true },
+    { icon: MessageSquare, label: 'AI Chat', id: 'chat' },
     { icon: Home, label: 'Home', id: 'home' },
     { icon: BarChart3, label: 'Analytics', id: 'analytics' },
     { icon: Users, label: 'Roster', id: 'roster' },
 ]
 
+const recentSessions = [
+    { label: 'General checkup', date: 'Today' },
+    { label: 'Sprint analysis', date: 'Yesterday' },
+    { label: 'Erg comparison', date: 'Mar 8' },
+]
+
 function App() {
-    const [sidebarOpen, setSidebarOpen] = useState(true)
+    const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 1024)
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1440)
     const [activeTab, setActiveTab] = useState('chat')
 
+    useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth
+            setIsMobile(width < 768)
+            setIsLargeScreen(width > 1440)
+            if (width < 768) {
+                setSidebarOpen(false)
+            } else if (width > 1024) {
+                setSidebarOpen(true)
+            }
+        }
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
+
+    const sidebarWidth = sidebarOpen ? (isLargeScreen ? 280 : 248) : (isMobile ? 0 : 64)
+
     return (
-        <div className="flex min-h-screen">
-            {/* ── Sidebar ────────────────────────────────── */}
-            <aside
-                className={`
-                    flex flex-col bg-white/70 backdrop-blur-lg border-r border-black/5
-                    transition-all duration-300 ease-in-out shrink-0
-                    ${sidebarOpen ? 'w-60' : 'w-[68px]'}
-                `}
-            >
-                {/* Logo */}
-                <div className={`p-5 flex items-center ${sidebarOpen ? 'justify-between' : 'justify-center'}`}>
+        <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+
+            {/* ── Sidebar Overlay (Mobile only) ────────────── */}
+            {isMobile && sidebarOpen && (
+                <div 
+                    onClick={() => setSidebarOpen(false)}
+                    style={{
+                        position: 'absolute',
+                        inset: 0,
+                        backgroundColor: 'rgba(0,0,0,0.2)',
+                        backdropFilter: 'blur(2px)',
+                        zIndex: 40,
+                    }}
+                />
+            )}
+
+            {/* ── Sidebar ─────────────────────────────────── */}
+            <aside style={{
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100%',
+                width: sidebarWidth,
+                flexShrink: 0,
+                borderRight: '1px solid rgba(0,0,0,0.04)',
+                background: 'rgba(255,255,255,0.95)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                overflow: 'hidden',
+                position: isMobile ? 'absolute' : 'relative',
+                zIndex: 50,
+                left: 0,
+            }}>
+
+                {/* Logo row */}
+                <div style={{
+                    height: 56,
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: sidebarOpen ? '0 12px 0 16px' : '0',
+                    justifyContent: sidebarOpen ? 'space-between' : 'center',
+                    flexShrink: 0,
+                }}>
                     {sidebarOpen && (
-                        <h1 className="text-xl font-extrabold tracking-tight premium-gradient-text">
+                        <h1 className="premium-gradient-text" style={{
+                            fontSize: 17,
+                            fontWeight: 800,
+                            letterSpacing: '-0.03em',
+                            lineHeight: 1,
+                        }}>
                             Ready Ready
                         </h1>
                     )}
                     <button
                         onClick={() => setSidebarOpen(!sidebarOpen)}
-                        className="p-2 rounded-lg hover:bg-sage-500/10 text-warmgray-500 transition-colors bg-transparent border-none"
-                        title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+                        style={{
+                            padding: '6px',
+                            borderRadius: 8,
+                            color: '#A0A0A0',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                        className="hover:bg-black/[0.04] hover:text-charcoal-600"
+                        title={sidebarOpen ? 'Collapse' : 'Expand'}
                     >
-                        {sidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
+                        {sidebarOpen ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
                     </button>
                 </div>
 
-                {/* Nav Items */}
-                <nav className="flex-1 px-3 space-y-1 mt-2">
+                {/* New Conv button */}
+                {sidebarOpen && (
+                    <div style={{ padding: '0 10px 8px' }}>
+                        <button style={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            padding: '8px 12px',
+                            borderRadius: 10,
+                            border: '1px solid rgba(0,0,0,0.07)',
+                            background: 'rgba(255,255,255,0.85)',
+                            color: '#4A4A4A',
+                            fontSize: 13,
+                            fontWeight: 500,
+                            cursor: 'pointer',
+                            transition: 'all 0.15s',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+                        }}
+                        className="hover:bg-white"
+                        >
+                            <Plus size={14} style={{ color: '#A0A0A0', flexShrink: 0 }} />
+                            New conversation
+                        </button>
+                    </div>
+                )}
+
+                {/* Nav items */}
+                <nav style={{ flex: 1, padding: sidebarOpen ? '4px 8px 0' : '4px 6px 0' }}>
                     {sidebarNavItems.map(item => (
                         <button
                             key={item.id}
-                            onClick={() => setActiveTab(item.id)}
-                            className={`
-                                w-full sidebar-nav-item bg-transparent border-none
-                                ${activeTab === item.id ? 'active' : ''}
-                                ${!sidebarOpen ? 'justify-center px-0' : ''}
-                            `}
+                            onClick={() => {
+                                setActiveTab(item.id)
+                                if (isMobile) setSidebarOpen(false)
+                            }}
                             title={item.label}
+                            className={`sidebar-nav-item ${activeTab === item.id ? 'active' : ''}`}
+                            style={{
+                                width: '100%',
+                                justifyContent: (sidebarOpen || isMobile) ? 'flex-start' : 'center',
+                                paddingLeft: sidebarOpen ? undefined : 0,
+                                paddingRight: sidebarOpen ? undefined : 0,
+                                gap: sidebarOpen ? undefined : 0,
+                            }}
                         >
-                            <item.icon size={20} />
-                            {sidebarOpen && <span>{item.label}</span>}
+                            <item.icon size={18} strokeWidth={activeTab === item.id ? 2.2 : 1.8} />
+                            {(sidebarOpen || (isMobile && sidebarOpen)) && <span>{item.label}</span>}
                         </button>
                     ))}
                 </nav>
 
-                {/* Recent Sessions (collapsed = hidden) */}
+                {/* Recent */}
                 {sidebarOpen && (
-                    <div className="px-4 pb-2 mt-4">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-warmgray-400 mb-3">
-                            Recent Sessions
+                    <div style={{
+                        padding: '12px 16px',
+                        borderTop: '1px solid rgba(0,0,0,0.04)',
+                    }}>
+                        <p style={{
+                            fontSize: 10,
+                            fontWeight: 600,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.12em',
+                            color: '#A0A0A0',
+                            marginBottom: 8,
+                        }}>
+                            Recent
                         </p>
-                        <div className="space-y-2">
-                            {[
-                                { label: 'General checkup', date: 'Today', dot: 'bg-sage-500' },
-                                { label: 'Sprint analysis', date: 'Yesterday', dot: 'bg-sage-400' },
-                                { label: 'Erg comparison', date: 'Mar 8', dot: 'bg-coral-400' },
-                            ].map((s, i) => (
-                                <div key={i} className="flex items-center gap-2 cursor-pointer group">
-                                    <div className={`w-2 h-2 rounded-full ${s.dot}`} />
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-charcoal-700 truncate group-hover:text-sage-500 transition-colors">
-                                            {s.label}
-                                        </p>
-                                        <p className="text-[10px] text-warmgray-400">{s.date}</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            {recentSessions.map((s, i) => (
+                                <div key={i} style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 10,
+                                    padding: '5px 6px',
+                                    borderRadius: 6,
+                                    cursor: 'pointer',
+                                }}
+                                onClick={() => { if (isMobile) setSidebarOpen(false) }}
+                                className="hover:bg-black/[0.03] group"
+                                >
+                                    <div style={{
+                                        width: 6,
+                                        height: 6,
+                                        borderRadius: '50%',
+                                        background: '#C0C0C0',
+                                        flexShrink: 0,
+                                    }} />
+                                    <div style={{ flex: 1, minWidth: 0 }}>
+                                        <p style={{
+                                            fontSize: 12,
+                                            color: '#4A4A4A',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap',
+                                            lineHeight: 1.3,
+                                        }}>{s.label}</p>
+                                        <p style={{ fontSize: 10, color: '#A0A0A0', lineHeight: 1.2 }}>{s.date}</p>
                                     </div>
                                 </div>
                             ))}
@@ -88,119 +217,52 @@ function App() {
                     </div>
                 )}
 
-                {/* Settings at bottom */}
-                <div className="px-3 pb-4 mt-auto">
+                {/* Settings */}
+                <div style={{
+                    padding: sidebarOpen ? '8px 8px 12px' : '8px 6px 12px',
+                    borderTop: '1px solid rgba(0,0,0,0.04)',
+                }}>
                     <button
-                        className={`
-                            w-full sidebar-nav-item bg-transparent border-none
-                            ${!sidebarOpen ? 'justify-center px-0' : ''}
-                        `}
+                        className="sidebar-nav-item"
                         title="Settings"
+                        style={{
+                            width: '100%',
+                            justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                            paddingLeft: sidebarOpen ? undefined : 0,
+                            paddingRight: sidebarOpen ? undefined : 0,
+                            gap: sidebarOpen ? undefined : 0,
+                        }}
                     >
-                        <Settings size={20} />
+                        <Settings size={18} strokeWidth={1.8} />
                         {sidebarOpen && <span>Settings</span>}
                     </button>
                 </div>
             </aside>
 
             {/* ── Main Content ───────────────────────────── */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-                {/* Header bar */}
-                <header className="px-8 py-5 flex justify-between items-end border-b border-black/5 bg-white/40 backdrop-blur-sm">
-                    <div>
-                        <h2 className="text-2xl font-bold text-charcoal-800 tracking-tight">
-                            {activeTab === 'chat' ? 'AI Performance Assistant' : activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-                        </h2>
-                        <p className="text-warmgray-500 text-sm flex items-center gap-2 mt-1">
-                            <span className="inline-flex items-center gap-1.5">
-                                <span className="w-2 h-2 rounded-full bg-sage-500 animate-soft-pulse" />
-                                <span className="text-sage-600 font-medium text-xs uppercase tracking-wider">Active Session</span>
-                            </span>
-                        </p>
-                    </div>
-                    <div className="hidden md:flex items-center gap-2">
-                        <span className="text-[10px] text-warmgray-400 uppercase tracking-widest">Status</span>
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-sage-500/10 text-sage-600 text-xs font-semibold rounded-full">
-                            <span className="w-1.5 h-1.5 rounded-full bg-sage-500" />
-                            Pre-Cuts Phase
-                        </span>
-                    </div>
-                </header>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', position: 'relative' }}>
+                
+                {/* Mobile Header Toggle */}
+                {isMobile && !sidebarOpen && (
+                    <button 
+                        onClick={() => setSidebarOpen(true)}
+                        style={{
+                            position: 'absolute',
+                            top: 12,
+                            left: 12,
+                            zIndex: 30,
+                            padding: '8px',
+                            background: 'white',
+                            borderRadius: '10px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                            border: '1px solid rgba(0,0,0,0.05)',
+                        }}
+                    >
+                        <Menu size={20} className="text-charcoal-600" />
+                    </button>
+                )}
 
-                {/* Content Area */}
-                <main className="flex-1 overflow-y-auto p-6 md:p-8">
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 xl:grid-cols-12 gap-8">
-                        {/* Chat + stat cards */}
-                        <section className="xl:col-span-8 flex flex-col gap-6">
-                            <BotUI />
-
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="glass-panel flex items-center gap-4">
-                                    <div className="p-3 bg-coral-300/40 rounded-xl text-coral-500">
-                                        <Zap size={20} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] text-warmgray-500 uppercase tracking-wide font-medium">Min Requirement</p>
-                                        <p className="text-lg font-bold text-charcoal-800">10 Points</p>
-                                    </div>
-                                </div>
-                                <div className="glass-panel flex items-center gap-4">
-                                    <div className="p-3 bg-sage-400/20 rounded-xl text-sage-500">
-                                        <TrendingUp size={20} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] text-warmgray-500 uppercase tracking-wide font-medium">Competitive Target</p>
-                                        <p className="text-lg font-bold text-charcoal-800">16+ Points</p>
-                                    </div>
-                                </div>
-                                <div className="glass-panel flex items-center gap-4">
-                                    <div className="p-3 bg-lavender-300/30 rounded-xl text-lavender-400">
-                                        <Shield size={20} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] text-warmgray-500 uppercase tracking-wide font-medium">Mobility</p>
-                                        <p className="text-lg font-bold text-charcoal-800">Pass / Fail</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        {/* Sidebar – Standards */}
-                        <aside className="xl:col-span-4 space-y-6">
-                            <div className="glass-panel space-y-5">
-                                <h3 className="text-base font-bold flex items-center gap-2 text-charcoal-800">
-                                    <Info size={18} className="text-sage-500" /> 2026 Standards
-                                </h3>
-
-                                <div className="space-y-4">
-                                    {[
-                                        { name: 'Deadlift', m: '225 or 1.5xBW (1s lockout)', f: '135 or 1.0xBW' },
-                                        { name: 'Pull-Ups (4 pts)', m: '≥ 35 reps', f: '≥ 15 reps' },
-                                        { name: 'Bench Press (4 pts)', m: '≥ 245 lbs (5 reps < 10s)', f: '≥ 135 lbs' },
-                                        { name: 'Run 12min (4 pts)', m: '≥ 3250 m (1% incline)', f: '≥ 2900 m' },
-                                    ].map((s, i) => (
-                                        <div key={i} className="pb-4 border-b border-black/5 last:border-b-0 last:pb-0">
-                                            <p className="text-sm font-semibold text-charcoal-700 mb-1">{s.name}</p>
-                                            <p className="text-xs text-warmgray-500">♂: {s.m}</p>
-                                            <p className="text-xs text-warmgray-500">♀: {s.f}</p>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="p-4 bg-sage-500/8 rounded-xl border border-sage-500/15">
-                                    <p className="text-xs text-sage-600 font-bold uppercase mb-1">Pro Tip</p>
-                                    <p className="text-xs text-warmgray-600 leading-relaxed">
-                                        Use the <span className="text-charcoal-800 font-semibold">Intake</span> button above to paste raw test notes. The AI will learn each paddler automatically.
-                                    </p>
-                                </div>
-                            </div>
-                        </aside>
-                    </div>
-                </main>
-
-                <footer className="px-8 py-4 border-t border-black/5 text-center text-warmgray-400 text-xs bg-white/30">
-                    &copy; 2026 Ready Ready Analytics. Powered by True Grit Paddlers.
-                </footer>
+                <BotUI />
             </div>
         </div>
     )

@@ -1,66 +1,123 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, User, Bot, Upload, X, Save, Download, ShieldCheck } from 'lucide-react';
+import { Send, User, Bot, Upload, X, Save, Download, ShieldCheck, ArrowUp } from 'lucide-react';
 import { FitnessMetrics } from '../data/types';
 import { parseRawFitnessData } from '../utils/parser';
 import { getGeminiResponse, createChatbotContext } from '../data/gemini';
 import initialPaddlers from '../data/paddlers.json';
 
+/* ── Typing Indicator Component ──────────────────── */
+const TypingIndicator = () => (
+    <div className="flex items-center gap-1 px-1 py-1">
+        <span className="typing-dot" />
+        <span className="typing-dot" />
+        <span className="typing-dot" />
+    </div>
+);
+
+/* ── Single Message Bubble ───────────────────────── */
+const MessageBubble = ({ role, content, isLoading }: { role: 'user' | 'bot'; content: string; isLoading?: boolean }) => {
+    const isUser = role === 'user';
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+        >
+            <div className={`flex gap-2.5 ${isUser ? 'flex-row-reverse max-w-[75%]' : 'max-w-[80%]'}`}>
+                {/* Avatar */}
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
+                    isUser
+                        ? 'bg-charcoal-800 text-white'
+                        : 'bg-cream-200 text-charcoal-600 ring-1 ring-black/[0.06]'
+                }`}>
+                    {isUser ? <User size={13} strokeWidth={2.2} /> : <Bot size={13} strokeWidth={2} />}
+                </div>
+
+                {/* Bubble */}
+                <div className={`msg-prose text-[13.5px] leading-[1.65] whitespace-pre-wrap ${
+                    isUser
+                        ? 'bg-charcoal-800 text-white px-4 py-2.5 rounded-2xl rounded-tr-md shadow-sm'
+                        : 'text-charcoal-700 px-0.5 pt-1 pb-0.5'
+                }`}>
+                    {isLoading ? <TypingIndicator /> : content}
+                </div>
+            </div>
+        </motion.div>
+    );
+};
+
+/* ── Main BotUI Component ────────────────────────── */
 const BotUI = () => {
-    const [messages, setMessages] = useState<{ role: 'user' | 'bot', content: string }[]>([
-        { role: 'bot', content: 'Ready to analyze your dragonboat team. How can I help you with the fitness data today?' }
-    ]);
+    const [messages, setMessages] = useState<{ role: 'user' | 'bot'; content: string }[]>([]);
     const [input, setInput] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const [paddlers, setPaddlers] = useState<FitnessMetrics[]>(initialPaddlers as FitnessMetrics[]);
     const [showIntake, setShowIntake] = useState(false);
     const [rawIntake, setRawIntake] = useState('');
     const [apiKey, setApiKey] = useState(import.meta.env.VITE_GEMINI_API_KEY || '');
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 640);
+    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1440);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
+        const handleResize = () => {
+            const width = window.innerWidth;
+            setIsSmallScreen(width < 640);
+            setIsLargeScreen(width > 1440);
+        };
+        window.addEventListener('resize', handleResize);
         const params = new URLSearchParams(window.location.search);
-        if (params.get('mode') === 'admin') {
-            setIsAdmin(true);
-            setMessages(prev => [...prev, { role: 'bot', content: '🛡️ Admin Mode activated. Intake tools are now visible.' }]);
-        }
+        if (params.get('mode') === 'admin') setIsAdmin(true);
+        return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
+    useEffect(() => { scrollToBottom(); }, [messages, isLoading]);
+
+    // Auto-resize textarea
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+        if (inputRef.current) {
+            inputRef.current.style.height = 'auto';
+            inputRef.current.style.height = Math.min(inputRef.current.scrollHeight, 160) + 'px';
+        }
+    }, [input]);
 
     const handleSend = async () => {
-        if (!input.trim()) return;
+        if (!input.trim() || isLoading) return;
 
         const userMsg = input.trim();
         setInput('');
         setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+        setIsLoading(true);
 
         if (!apiKey) {
-            setMessages(prev => [...prev, { role: 'bot', content: '❌ API Key missing. If you are a developer, please check your .env file.' }]);
+            setMessages(prev => [...prev, { role: 'bot', content: 'API Key is missing. Please check your .env configuration.' }]);
+            setIsLoading(false);
             return;
         }
 
         try {
-            setMessages(prev => [...prev, { role: 'bot', content: '...' }]);
             const response = await getGeminiResponse(apiKey, userMsg, [...messages, { role: 'user', content: userMsg }], paddlers);
-
-            setMessages(prev => {
-                const newMsgs = [...prev];
-                newMsgs[newMsgs.length - 1] = { role: 'bot', content: response };
-                return newMsgs;
-            });
+            setMessages(prev => [...prev, { role: 'bot', content: response }]);
         } catch (error) {
-            setMessages(prev => {
-                const newMsgs = [...prev];
-                newMsgs[newMsgs.length - 1] = { role: 'bot', content: 'Error communicating with Gemini. Ensure your API Key is valid.' };
-                return newMsgs;
-            });
+            setMessages(prev => [...prev, { role: 'bot', content: 'Something went wrong. Please check your API key and try again.' }]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
         }
     };
 
@@ -69,147 +126,258 @@ const BotUI = () => {
         setPaddlers(prev => [...prev, newPaddler]);
         setRawIntake('');
         setShowIntake(false);
-        setMessages(prev => [...prev, { role: 'bot', content: `✅ Parsed ${newPaddler.name}. Don't forget to Export the JSON when you're done!` }]);
+        setMessages(prev => [...prev, { role: 'bot', content: `Parsed ${newPaddler.name} successfully. Use the Export button to save the updated dataset.` }]);
     };
 
     const exportJSON = () => {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(paddlers, null, 2));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "paddlers.json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
+        const a = document.createElement('a');
+        a.setAttribute("href", dataStr);
+        a.setAttribute("download", "paddlers.json");
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
     };
 
-    return (
-        <div className="flex flex-col h-[600px] w-full glass-panel overflow-hidden shadow-lg">
-            {/* Header */}
-            <div className="px-5 py-4 border-b border-black/5 flex justify-between items-center bg-white/50">
-                <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-sage-500/15 flex items-center justify-center">
-                        <Bot size={16} className="text-sage-600" />
-                    </div>
-                    <div>
-                        <span className="font-semibold text-sm text-charcoal-800">The Ready Bot</span>
-                        {isAdmin && <ShieldCheck size={14} className="text-sage-500 inline ml-1.5" />}
-                    </div>
-                    <span className="w-2 h-2 rounded-full bg-sage-500 animate-soft-pulse" />
-                </div>
-                <div className="flex gap-2">
-                    {isAdmin && (
-                        <>
-                            <input
-                                type="password"
-                                placeholder="API Key Override"
-                                className="bg-cream-200/60 border border-black/8 rounded-lg px-3 py-1.5 text-xs outline-none focus:border-sage-500/50 text-charcoal-800"
-                                value={apiKey}
-                                onChange={(e) => setApiKey(e.target.value)}
-                            />
-                            <button
-                                onClick={() => setShowIntake(true)}
-                                className="bg-sage-500/12 text-sage-600 text-xs px-3 py-1.5 rounded-full border border-sage-500/20 hover:bg-sage-500/20 transition-all flex items-center gap-1 font-medium"
-                            >
-                                <Upload size={13} /> Intake
-                            </button>
-                            <button
-                                onClick={exportJSON}
-                                className="bg-lavender-300/30 text-lavender-400 text-xs px-3 py-1.5 rounded-full border border-lavender-300/40 hover:bg-lavender-300/50 transition-all flex items-center gap-1 font-medium"
-                            >
-                                <Download size={13} /> Export
-                            </button>
-                        </>
-                    )}
-                </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-4 chat-scroll">
-                {messages.map((m, i) => (
-                    <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.25 }}
-                        key={i}
-                        className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                        <div className={`flex gap-3 max-w-[80%] ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                                m.role === 'user'
-                                    ? 'bg-sage-500/15 text-sage-600'
-                                    : 'bg-coral-300/40 text-coral-500'
-                            }`}>
-                                {m.role === 'user' ? <User size={15} /> : <Bot size={15} />}
-                            </div>
-                            <div className={`px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${
-                                m.role === 'user'
-                                    ? 'bg-sage-500 text-white rounded-tr-sm shadow-sm'
-                                    : 'bg-cream-200/70 text-charcoal-800 rounded-tl-sm border border-black/5'
-                            }`}>
-                                {m.content}
-                            </div>
-                        </div>
-                    </motion.div>
-                ))}
-                <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input */}
-            <div className="px-4 py-3 border-t border-black/5 bg-white/50 flex gap-2.5">
-                <input
-                    type="text"
+    const renderInput = (isCentered: boolean) => (
+        <div style={{
+            maxWidth: isLargeScreen ? 800 : 672,
+            margin: '0 auto',
+            width: '100%',
+            padding: isCentered ? (isSmallScreen ? '0 8px' : '0') : '0'
+        }}>
+            <div style={{
+                display: 'flex',
+                alignItems: 'flex-end',
+                gap: 8,
+                background: 'rgba(255,255,255,0.88)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(0,0,0,0.08)',
+                borderRadius: 18,
+                padding: isLargeScreen ? '14px 18px' : '10px 12px 10px 16px',
+                boxShadow: isCentered ? '0 10px 40px rgba(0,0,0,0.05)' : '0 1px 4px rgba(0,0,0,0.04)',
+                transition: 'box-shadow 0.2s, border-color 0.2s',
+            }}>
+                <textarea
+                    ref={isCentered ? null : inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                    onKeyDown={handleKeyDown}
                     placeholder="Ask a question about the team..."
-                    className="flex-1 bg-cream-100/80 border border-black/6 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-sage-500/40 focus:ring-2 focus:ring-sage-500/10 transition-all text-charcoal-800 placeholder-warmgray-400"
+                    rows={1}
+                    style={{
+                        flex: 1,
+                        background: 'transparent',
+                        border: 'none',
+                        outline: 'none',
+                        resize: 'none',
+                        fontSize: isLargeScreen ? 15 : 14,
+                        color: '#2D3436',
+                        lineHeight: 1.5,
+                        padding: '4px 0',
+                        maxHeight: 160,
+                        fontFamily: 'inherit',
+                    }}
                 />
                 <button
                     onClick={handleSend}
-                    className="bg-sage-500 text-white p-3 rounded-xl hover:bg-sage-600 transition-colors shadow-sm"
+                    disabled={!input.trim() || isLoading}
+                    style={{
+                        flexShrink: 0,
+                        width: isLargeScreen ? 36 : 32,
+                        height: isLargeScreen ? 36 : 32,
+                        borderRadius: 10,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: input.trim() && !isLoading ? '#2D3436' : 'rgba(0,0,0,0.06)',
+                        color: input.trim() && !isLoading ? '#ffffff' : '#BCBCBC',
+                        cursor: input.trim() && !isLoading ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.15s',
+                        boxShadow: input.trim() && !isLoading ? '0 1px 3px rgba(0,0,0,0.18)' : 'none',
+                    }}
                 >
-                    <Send size={18} />
+                    <ArrowUp size={isLargeScreen ? 18 : 16} strokeWidth={2.5} />
                 </button>
             </div>
+        </div>
+    );
 
-            {/* Intake Modal */}
+    const hasMessages = messages.length > 0;
+
+    return (
+        <div className="flex flex-col h-full bg-cream-50/30">
+            {/* ── Admin Bar (only in admin mode) ─────────── */}
+            {isAdmin && (
+                <div className="flex flex-wrap items-center gap-2 px-5 py-2 bg-cream-100/60 border-b border-black/[0.04]">
+                    <ShieldCheck size={14} className="text-charcoal-500" />
+                    <span className="text-[11px] text-warmgray-500 font-medium">Admin</span>
+                    <div className="flex-1 md:flex-none" />
+                    <input
+                        type="password"
+                        placeholder="API Key"
+                        className="bg-white/70 border border-black/[0.06] rounded-md px-2.5 py-1 text-[11px] outline-none focus:border-charcoal-300 text-charcoal-700 w-full sm:w-40"
+                        value={apiKey}
+                        onChange={(e) => setApiKey(e.target.value)}
+                    />
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setShowIntake(true)}
+                            className="text-[11px] font-medium text-charcoal-700 hover:text-black px-2.5 py-1 rounded-md hover:bg-black/[0.04]"
+                        >
+                            <Upload size={12} className="inline mr-1" />Intake
+                        </button>
+                        <button
+                            onClick={exportJSON}
+                            className="text-[11px] font-medium text-warmgray-500 hover:text-charcoal-700 px-2.5 py-1 rounded-md hover:bg-black/[0.04]"
+                        >
+                            <Download size={12} className="inline mr-1" />Export
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* ── Messages Area ──────────────────────────── */}
+            <div className="flex-1 overflow-y-auto chat-scroll flex flex-col items-center">
+                {!hasMessages ? (
+                    /* ── Welcome State: Centered Input ─────── */
+                    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 max-w-4xl w-full select-none" style={{ marginTop: isSmallScreen ? '0' : '-60px' }}>
+                        <div className={`rounded-2xl bg-black/[0.04] flex items-center justify-center mb-6 ${isLargeScreen ? 'w-16 h-16' : 'w-12 h-12'}`}>
+                            <Bot size={isLargeScreen ? 32 : 22} className="text-charcoal-600" strokeWidth={1.6} />
+                        </div>
+                        <h2 className={`${isLargeScreen ? 'text-4xl' : 'text-xl sm:text-2xl'} font-bold text-charcoal-800 mb-6 sm:mb-8 tracking-tight text-center`}>
+                            Ready Ready
+                        </h2>
+
+                        {/* Centered Input Area */}
+                        <div className="w-full mb-8 max-w-lg sm:max-w-none">
+                            {renderInput(true)}
+                        </div>
+
+                        {/* Suggestions row below input */}
+                        <div className="flex flex-wrap justify-center gap-2 max-w-2xl px-2">
+                            {[
+                                'Who has the highest deadlift?',
+                                'Compare the top 5 paddlers',
+                                'Who needs to improve their run?',
+                                'Show the 2026 cut standards',
+                            ].map((q, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setInput(q)}
+                                    style={{
+                                        textAlign: 'left',
+                                        padding: '6px 14px',
+                                        borderRadius: 20,
+                                        border: '1px solid rgba(0,0,0,0.08)',
+                                        background: 'rgba(255,255,255,0.6)',
+                                        fontSize: 12,
+                                        color: '#636E72',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.15s',
+                                        fontFamily: 'inherit',
+                                    }}
+                                    onMouseEnter={e => {
+                                        const btn = e.currentTarget as HTMLButtonElement;
+                                        btn.style.background = '#ffffff';
+                                        btn.style.borderColor = 'rgba(0,0,0,0.15)';
+                                        btn.style.color = '#2D3436';
+                                    }}
+                                    onMouseLeave={e => {
+                                        const btn = e.currentTarget as HTMLButtonElement;
+                                        btn.style.background = 'rgba(255,255,255,0.6)';
+                                        btn.style.borderColor = 'rgba(0,0,0,0.08)';
+                                        btn.style.color = '#636E72';
+                                    }}
+                                >
+                                    {q}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                ) : (
+                    /* ── Message List ─────────────────────── */
+                    <div className={`${isLargeScreen ? 'max-w-5xl' : 'max-w-3xl'} w-full px-4 sm:px-6 py-6 space-y-5`}>
+                        {messages.map((m, i) => (
+                            <MessageBubble key={i} role={m.role} content={m.content} />
+                        ))}
+                        {isLoading && (
+                            <MessageBubble role="bot" content="" isLoading />
+                        )}
+                        <div ref={messagesEndRef} />
+                    </div>
+                )}
+            </div>
+
+            {/* ── Bottom Input Area (only if has messages) ── */}
+            {hasMessages && (
+                <div style={{ 
+                    flexShrink: 0, 
+                    padding: isSmallScreen ? '8px 12px 16px' : '8px 24px 16px',
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center'
+                }}>
+                    <div style={{ width: '100%', maxWidth: isLargeScreen ? 880 : 768 }}>
+                        {renderInput(false)}
+                    </div>
+                    <p style={{
+                        textAlign: 'center',
+                        fontSize: 10.5,
+                        color: '#BCBCBC',
+                        marginTop: 8,
+                        userSelect: 'none',
+                    }}>
+                        Powered by Gemini · True Grit 2026 Performance Data
+                    </p>
+                </div>
+            )}
+
+            {/* ── Intake Modal ───────────────────────────── */}
             <AnimatePresence>
                 {showIntake && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal-900/30 backdrop-blur-sm"
+                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm"
                     >
                         <motion.div
-                            initial={{ scale: 0.95, y: 12 }}
+                            initial={{ scale: 0.97, y: 8 }}
                             animate={{ scale: 1, y: 0 }}
-                            className="bg-white rounded-2xl shadow-xl w-full max-w-2xl p-8 space-y-4 border border-black/5"
+                            exit={{ scale: 0.97, opacity: 0 }}
+                            className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 border border-black/[0.04]"
                         >
                             <div className="flex justify-between items-center">
-                                <h3 className="text-xl font-bold flex items-center gap-2 text-charcoal-800">
-                                    <Upload className="text-sage-500" /> Smart Data Intake
+                                <h3 className="text-base font-bold flex items-center gap-2 text-charcoal-800">
+                                    <Upload size={18} className="text-sage-500" /> Smart Data Intake
                                 </h3>
-                                <button onClick={() => setShowIntake(false)} className="text-warmgray-400 hover:text-charcoal-700 bg-transparent border-none p-1">
-                                    <X />
+                                <button onClick={() => setShowIntake(false)} className="text-warmgray-400 hover:text-charcoal-700 p-1 rounded-md hover:bg-black/[0.04]">
+                                    <X size={18} />
                                 </button>
                             </div>
-                            <p className="text-warmgray-500 text-sm">Paste raw text notes for a single paddler. The parser will extract all 2026 standardized metrics.</p>
+                            <p className="text-warmgray-500 text-[13px] leading-relaxed">
+                                Paste raw text notes for a single paddler. The parser will extract all 2026 standardized metrics.
+                            </p>
                             <textarea
                                 value={rawIntake}
                                 onChange={(e) => setRawIntake(e.target.value)}
-                                className="w-full h-48 bg-cream-100 border border-black/8 rounded-xl p-4 text-sm font-mono focus:outline-none focus:border-sage-500/50 focus:ring-2 focus:ring-sage-500/10 text-charcoal-800 resize-none"
+                                className="w-full h-40 bg-cream-50 border border-black/[0.06] rounded-xl p-3.5 text-[13px] font-mono focus:outline-none focus:border-sage-500/40 focus:ring-2 focus:ring-sage-500/8 text-charcoal-700 resize-none"
                                 placeholder="Mobility - Hip Flexion: Bonus... Total: 18 pts"
                             />
-                            <div className="flex justify-end gap-3 pt-2">
-                                <button onClick={() => setShowIntake(false)} className="px-6 py-2.5 rounded-xl border border-black/8 text-warmgray-500 hover:bg-cream-100 bg-transparent transition-colors text-sm">
+                            <div className="flex justify-end gap-2.5 pt-1">
+                                <button
+                                    onClick={() => setShowIntake(false)}
+                                    className="px-4 py-2 rounded-lg border border-black/[0.06] text-warmgray-500 hover:bg-cream-100 text-[13px] font-medium"
+                                >
                                     Cancel
                                 </button>
                                 <button
                                     onClick={handleIntakeSave}
-                                    className="px-6 py-2.5 rounded-xl bg-sage-500 text-white font-semibold hover:bg-sage-600 flex items-center gap-2 transition-colors shadow-sm text-sm"
+                                    className="px-4 py-2 rounded-lg bg-sage-500 text-white font-semibold hover:bg-sage-600 flex items-center gap-1.5 shadow-sm text-[13px]"
                                 >
-                                    <Save size={16} /> Parse & Save
+                                    <Save size={14} /> Parse & Save
                                 </button>
                             </div>
                         </motion.div>
