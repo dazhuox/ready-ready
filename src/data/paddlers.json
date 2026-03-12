@@ -2343,8 +2343,8 @@
         },
         "pushupsDips": {
             "pts": 4,
-            "lbs": null,
-            "time": null
+            "reps": 46,
+            "type": "dip"
         },
         "cardio": {
             "pts": 2.5,

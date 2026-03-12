@@ -29,7 +29,7 @@ export const createChatbotContext = (paddlers: FitnessMetrics[]) => {
 export const getGeminiResponse = async (apiKey: string, prompt: string, history: ChatMessage[], paddlers: FitnessMetrics[]) => {
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
-    model: "gemini-flash-latest",
+    model: "gemini-3.1-flash-lite-preview",
     systemInstruction: createChatbotContext(paddlers)
   });
 

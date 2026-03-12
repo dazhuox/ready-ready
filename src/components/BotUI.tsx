@@ -15,35 +15,34 @@ const TypingIndicator = () => (
     </div>
 );
 
-/* ── Single Message Bubble ───────────────────────── */
 const MessageBubble = ({ role, content, isLoading }: { role: 'user' | 'bot'; content: string; isLoading?: boolean }) => {
     const isUser = role === 'user';
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 6 }}
+            layout
+            data-role={role}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+            className={`flex w-full scroll-mt-6 ${isUser ? 'justify-end mb-4' : 'justify-start mb-[20vh]'}`}
         >
-            <div className={`flex gap-2.5 ${isUser ? 'flex-row-reverse max-w-[75%]' : 'max-w-[80%]'}`}>
-                {/* Avatar */}
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                    isUser
-                        ? 'bg-charcoal-800 text-white'
-                        : 'bg-cream-200 text-charcoal-600 ring-1 ring-black/[0.06]'
-                }`}>
-                    {isUser ? <User size={13} strokeWidth={2.2} /> : <Bot size={13} strokeWidth={2} />}
-                </div>
-
+            <div className={`flex gap-4 w-full ${isUser ? 'justify-end' : 'max-w-3xl'}`}>
                 {/* Bubble */}
-                <div className={`msg-prose text-[13.5px] leading-[1.65] whitespace-pre-wrap ${
-                    isUser
-                        ? 'bg-charcoal-800 text-white px-4 py-2.5 rounded-2xl rounded-tr-md shadow-sm'
-                        : 'text-charcoal-700 px-0.5 pt-1 pb-0.5'
-                }`}>
-                    {isLoading ? <TypingIndicator /> : content}
-                </div>
+                {isUser ? (
+                    <div
+                        className="bg-[#F3F2EB] rounded-2xl max-w-[75%] shadow-sm"
+                        style={{ padding: '8px 12px' }}
+                    >
+                        <div className="msg-prose text-[15px] text-[#2D3436] leading-[1.6] whitespace-pre-wrap">
+                            {content}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="msg-prose text-[15px] leading-[1.6] whitespace-pre-wrap text-charcoal-800 pt-1 flex-1">
+                        {isLoading ? <TypingIndicator /> : content}
+                    </div>
+                )}
             </div>
         </motion.div>
     );
@@ -76,11 +75,24 @@ const BotUI = () => {
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const scrollToLatestQuery = () => {
+        const userElements = document.querySelectorAll('[data-role="user"]');
+        const latestUserElement = userElements[userElements.length - 1];
+
+        if (latestUserElement) {
+            latestUserElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }
     };
 
-    useEffect(() => { scrollToBottom(); }, [messages, isLoading]);
+    useEffect(() => {
+        // Allow the DOM to update with the new message before navigating
+        const timeout = setTimeout(() => {
+            scrollToLatestQuery();
+        }, 50);
+        return () => clearTimeout(timeout);
+    }, [messages, isLoading]);
 
     // Auto-resize textarea
     useEffect(() => {
@@ -140,30 +152,32 @@ const BotUI = () => {
     };
 
     const renderInput = (isCentered: boolean) => (
-        <div style={{
-            maxWidth: isLargeScreen ? 800 : 672,
-            margin: '0 auto',
-            width: '100%',
-            padding: isCentered ? (isSmallScreen ? '0 8px' : '0') : '0'
-        }}>
+        <motion.div
+            layoutId="search-container"
+            style={{
+                maxWidth: isLargeScreen ? 820 : 720,
+                margin: '0 auto',
+                width: '100%',
+                padding: isCentered ? (isSmallScreen ? '0 16px' : '0') : '0'
+            }}
+        >
             <div style={{
                 display: 'flex',
                 alignItems: 'flex-end',
-                gap: 8,
-                background: 'rgba(255,255,255,0.88)',
-                backdropFilter: 'blur(12px)',
+                gap: 12,
+                background: isCentered ? '#ffffff' : '#f8f9fa',
                 border: '1px solid rgba(0,0,0,0.08)',
-                borderRadius: 18,
-                padding: isLargeScreen ? '14px 18px' : '10px 12px 10px 16px',
-                boxShadow: isCentered ? '0 10px 40px rgba(0,0,0,0.05)' : '0 1px 4px rgba(0,0,0,0.04)',
-                transition: 'box-shadow 0.2s, border-color 0.2s',
+                borderRadius: 22,
+                padding: isLargeScreen ? '14px 16px 14px 20px' : '8px 12px 8px 16px',
+                boxShadow: isCentered ? '0 8px 32px rgba(0,0,0,0.06)' : 'none',
+                transition: 'all 0.3s ease',
             }}>
                 <textarea
                     ref={isCentered ? null : inputRef}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Ask a question about the team..."
+                    placeholder="Message Ready Ready..."
                     rows={1}
                     style={{
                         flex: 1,
@@ -171,11 +185,11 @@ const BotUI = () => {
                         border: 'none',
                         outline: 'none',
                         resize: 'none',
-                        fontSize: isLargeScreen ? 15 : 14,
+                        fontSize: isLargeScreen ? 16 : 15,
                         color: '#2D3436',
                         lineHeight: 1.5,
-                        padding: '4px 0',
-                        maxHeight: 160,
+                        padding: '8px 0',
+                        maxHeight: 200,
                         fontFamily: 'inherit',
                     }}
                 />
@@ -184,23 +198,22 @@ const BotUI = () => {
                     disabled={!input.trim() || isLoading}
                     style={{
                         flexShrink: 0,
-                        width: isLargeScreen ? 36 : 32,
-                        height: isLargeScreen ? 36 : 32,
-                        borderRadius: 10,
+                        width: isLargeScreen ? 40 : 36,
+                        height: isLargeScreen ? 40 : 36,
+                        borderRadius: 12,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        background: input.trim() && !isLoading ? '#2D3436' : 'rgba(0,0,0,0.06)',
+                        background: input.trim() && !isLoading ? '#2D3436' : '#F3F4F6',
                         color: input.trim() && !isLoading ? '#ffffff' : '#BCBCBC',
                         cursor: input.trim() && !isLoading ? 'pointer' : 'not-allowed',
-                        transition: 'all 0.15s',
-                        boxShadow: input.trim() && !isLoading ? '0 1px 3px rgba(0,0,0,0.18)' : 'none',
+                        transition: 'all 0.2s ease',
                     }}
                 >
                     <ArrowUp size={isLargeScreen ? 18 : 16} strokeWidth={2.5} />
                 </button>
             </div>
-        </div>
+        </motion.div>
     );
 
     const hasMessages = messages.length > 0;
@@ -238,7 +251,9 @@ const BotUI = () => {
             )}
 
             {/* ── Messages Area ──────────────────────────── */}
-            <div className="flex-1 overflow-y-auto chat-scroll flex flex-col items-center">
+            <div className="flex-1 overflow-y-auto chat-scroll flex flex-col items-center justify-start relative z-0">
+                {/* Spacer block to push content down if needed, but allows scroll past */}
+                {hasMessages && <div className="shrink-0 h-[40vh] w-full" />}
                 {!hasMessages ? (
                     /* ── Welcome State: Centered Input ─────── */
                     <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 max-w-4xl w-full select-none" style={{ marginTop: isSmallScreen ? '0' : '-60px' }}>
@@ -297,27 +312,35 @@ const BotUI = () => {
                     </div>
                 ) : (
                     /* ── Message List ─────────────────────── */
-                    <div className={`${isLargeScreen ? 'max-w-5xl' : 'max-w-3xl'} w-full px-4 sm:px-6 py-6 space-y-5`}>
+                    <div className={`${isLargeScreen ? 'max-w-4xl' : 'max-w-3xl'} w-full px-4 sm:px-6 space-y-4`}>
+                        {/* Remove redundant top spacer since outer flex handles it */}
                         {messages.map((m, i) => (
                             <MessageBubble key={i} role={m.role} content={m.content} />
                         ))}
                         {isLoading && (
                             <MessageBubble role="bot" content="" isLoading />
                         )}
-                        <div ref={messagesEndRef} />
+                        {/* Huge bottom spacer ensures the latest query can scroll all the way to the top */}
+                        <div ref={messagesEndRef} className="h-[90vh] w-full shrink-0" />
                     </div>
                 )}
             </div>
 
             {/* ── Bottom Input Area (only if has messages) ── */}
             {hasMessages && (
-                <div style={{ 
-                    flexShrink: 0, 
-                    padding: isSmallScreen ? '8px 12px 16px' : '8px 24px 16px',
+                <div style={{
+                    flexShrink: 0,
+                    padding: isSmallScreen ? '8px 12px 16px' : '8px 24px 32px',
                     width: '100%',
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    background: 'linear-gradient(180deg, transparent 0%, rgba(250, 246, 240, 0.8) 20%, rgba(250, 246, 240, 1) 100%)',
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    zIndex: 10
                 }}>
                     <div style={{ width: '100%', maxWidth: isLargeScreen ? 880 : 768 }}>
                         {renderInput(false)}
