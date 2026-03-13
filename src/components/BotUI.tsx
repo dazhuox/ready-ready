@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, User, Bot, Upload, X, Save, Download, ShieldCheck, ArrowUp } from 'lucide-react';
 import { FitnessMetrics } from '../data/types';
 import { parseRawFitnessData } from '../utils/parser';
-import { getGeminiResponse, createChatbotContext } from '../data/gemini';
+import { getGeminiStream, createChatbotContext } from '../data/gemini';
 import initialPaddlers from '../data/paddlers.json';
 
 /* ── Typing Indicator Component ──────────────────── */
@@ -20,12 +20,12 @@ const MessageBubble = ({ role, content, isLoading }: { role: 'user' | 'bot'; con
 
     return (
         <motion.div
-            layout
             data-role={role}
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-            className={`flex w-full scroll-mt-6 ${isUser ? 'justify-end mb-4' : 'justify-start mb-[20vh]'}`}
+            className={`flex w-full scroll-mt-6 ${isUser ? 'justify-end' : 'justify-start'}`}
+            style={{ marginBottom: isUser ? '32px' : '100px' }}
         >
             <div className={`flex gap-4 w-full ${isUser ? 'justify-end' : 'max-w-3xl'}`}>
                 {/* Bubble */}
@@ -86,13 +86,19 @@ const BotUI = () => {
         }
     };
 
+    const userMessageCount = messages.filter(m => m.role === 'user').length;
+
     useEffect(() => {
-        // Allow the DOM to update with the new message before navigating
-        const timeout = setTimeout(() => {
-            scrollToLatestQuery();
-        }, 50);
-        return () => clearTimeout(timeout);
-    }, [messages, isLoading]);
+        // Only trigger the auto-scroll when a new USER message is added.
+        // This prevents the scroll-to-top logic from recalculating and jittering 
+        // when the bot's answer is printed.
+        if (userMessageCount > 0) {
+            const timeout = setTimeout(() => {
+                scrollToLatestQuery();
+            }, 50);
+            return () => clearTimeout(timeout);
+        }
+    }, [userMessageCount]);
 
     // Auto-resize textarea
     useEffect(() => {
@@ -107,21 +113,59 @@ const BotUI = () => {
 
         const userMsg = input.trim();
         setInput('');
-        setMessages(prev => [...prev, { role: 'user', content: userMsg }]);
+
+        // Save the history state specifically needed for Gemini before we add the placeholder bot message
+        const currentHistory: { role: 'user' | 'bot'; content: string }[] = [
+            ...messages,
+            { role: 'user', content: userMsg }
+        ];
+
+        // Append the user's message AND an empty bot placeholder to strictly preserve the DOM node
+        setMessages(prev => [
+            ...prev,
+            { role: 'user', content: userMsg },
+            { role: 'bot', content: '' }
+        ]);
         setIsLoading(true);
 
         if (!apiKey) {
-            setMessages(prev => [...prev, { role: 'bot', content: 'API Key is missing. Please check your .env configuration.' }]);
+            setMessages(prev => {
+                const updated = [...prev];
+                updated[updated.length - 1] = { role: 'bot', content: 'API Key is missing. Please check your .env configuration.' };
+                return updated;
+            });
             setIsLoading(false);
             return;
         }
 
         try {
-            const response = await getGeminiResponse(apiKey, userMsg, [...messages, { role: 'user', content: userMsg }], paddlers);
-            setMessages(prev => [...prev, { role: 'bot', content: response }]);
+            const stream = await getGeminiStream(apiKey, userMsg, currentHistory, paddlers);
+
+            let fullText = '';
+            let isFirstChunk = true;
+            for await (const chunk of stream) {
+                if (isFirstChunk) {
+                    setIsLoading(false);
+                    isFirstChunk = false;
+                }
+                // Distribute the chunk character-by-character for a smooth typing effect
+                for (let i = 0; i < chunk.length; i++) {
+                    fullText += chunk[i];
+                    setMessages(prev => {
+                        const updated = [...prev];
+                        updated[updated.length - 1] = { role: 'bot', content: fullText };
+                        return updated;
+                    });
+                    // 10ms per character = ~100 characters per second. Extremely smooth.
+                    await new Promise(resolve => setTimeout(resolve, 8));
+                }
+            }
         } catch (error) {
-            setMessages(prev => [...prev, { role: 'bot', content: 'Something went wrong. Please check your API key and try again.' }]);
-        } finally {
+            setMessages(prev => {
+                const updated = [...prev];
+                updated[updated.length - 1] = { role: 'bot', content: 'Something went wrong. Please check your API key and try again.' };
+                return updated;
+            });
             setIsLoading(false);
         }
     };
@@ -218,6 +262,23 @@ const BotUI = () => {
 
     const hasMessages = messages.length > 0;
 
+    // Group messages into conversational turns so we can apply min-height to the last turn.
+    // This allows the last query to smoothly hit the top of the page without creating excess scrollable void.
+    const groupedTurns: { user: any, bots: any[] }[] = [];
+    let currentTurn: { user: any, bots: any[] } | null = null;
+
+    messages.forEach(m => {
+        if (m.role === 'user') {
+            currentTurn = { user: m, bots: [] };
+            groupedTurns.push(currentTurn);
+        } else if (currentTurn) {
+            currentTurn.bots.push(m);
+        } else {
+            // Edge case: Bot message without a leading user message
+            groupedTurns.push({ user: null, bots: [m] });
+        }
+    });
+
     return (
         <div className="flex flex-col h-full bg-cream-50/30">
             {/* ── Admin Bar (only in admin mode) ─────────── */}
@@ -251,9 +312,10 @@ const BotUI = () => {
             )}
 
             {/* ── Messages Area ──────────────────────────── */}
-            <div className="flex-1 overflow-y-auto chat-scroll flex flex-col items-center justify-start relative z-0">
-                {/* Spacer block to push content down if needed, but allows scroll past */}
-                {hasMessages && <div className="shrink-0 h-[40vh] w-full" />}
+            <div
+                className="flex-1 overflow-y-auto chat-scroll flex flex-col items-center justify-start relative z-0"
+                style={{ scrollPaddingTop: '5vh', overflowAnchor: 'none' }}
+            >
                 {!hasMessages ? (
                     /* ── Welcome State: Centered Input ─────── */
                     <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 max-w-4xl w-full select-none" style={{ marginTop: isSmallScreen ? '0' : '-60px' }}>
@@ -312,16 +374,38 @@ const BotUI = () => {
                     </div>
                 ) : (
                     /* ── Message List ─────────────────────── */
-                    <div className={`${isLargeScreen ? 'max-w-4xl' : 'max-w-3xl'} w-full px-4 sm:px-6 space-y-4`}>
-                        {/* Remove redundant top spacer since outer flex handles it */}
-                        {messages.map((m, i) => (
-                            <MessageBubble key={i} role={m.role} content={m.content} />
-                        ))}
-                        {isLoading && (
-                            <MessageBubble role="bot" content="" isLoading />
-                        )}
-                        {/* Huge bottom spacer ensures the latest query can scroll all the way to the top */}
-                        <div ref={messagesEndRef} className="h-[90vh] w-full shrink-0" />
+                    <div
+                        className="w-full px-4 sm:px-6 flex flex-col mx-auto pt-[5vh] pb-4"
+                        style={{ maxWidth: isLargeScreen ? 600 : 420 }}
+                    >
+                        {groupedTurns.map((turn, index) => {
+                            const isLastTurn = index === groupedTurns.length - 1;
+                            return (
+                                <div
+                                    key={index}
+                                    className="flex flex-col w-full"
+                                    style={{ minHeight: isLastTurn ? 'calc(100vh - 150px)' : 'auto' }}
+                                >
+                                    {turn.user && (
+                                        <MessageBubble role="user" content={turn.user.content} />
+                                    )}
+                                    {turn.bots.map((botMsg, i) => {
+                                        // The bot message is 'loading' only if it's the very last one, its content is empty, and the app is officially in a loading state
+                                        const isBotLoading = isLoading && isLastTurn && i === turn.bots.length - 1 && botMsg.content === '';
+                                        return (
+                                            <MessageBubble
+                                                key={i}
+                                                role="bot"
+                                                content={botMsg.content}
+                                                isLoading={isBotLoading}
+                                            />
+                                        );
+                                    })}
+                                </div>
+                            );
+                        })}
+                        {/* Bottom spacer ensures the last message isn't hidden behind the fixed input box */}
+                        <div ref={messagesEndRef} className="h-[150px] w-full shrink-0" />
                     </div>
                 )}
             </div>
@@ -342,12 +426,12 @@ const BotUI = () => {
                     right: 0,
                     zIndex: 10
                 }}>
-                    <div style={{ width: '100%', maxWidth: isLargeScreen ? 880 : 768 }}>
+                    <div style={{ width: '100%', maxWidth: isLargeScreen ? 600 : 420 }}>
                         {renderInput(false)}
                     </div>
                     <p style={{
                         textAlign: 'center',
-                        fontSize: 10.5,
+                        fontSize: 8,
                         color: '#BCBCBC',
                         marginTop: 8,
                         userSelect: 'none',

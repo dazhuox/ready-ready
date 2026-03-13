@@ -26,6 +26,30 @@ export const createChatbotContext = (paddlers: FitnessMetrics[]) => {
   `;
 };
 
+export const getGeminiStream = async function* (apiKey: string, prompt: string, history: ChatMessage[], paddlers: FitnessMetrics[]) {
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({
+    model: "gemini-3.1-flash-lite-preview",
+    systemInstruction: createChatbotContext(paddlers)
+  });
+
+  const contents = history
+    .filter(msg => msg.content !== "Ready to analyze your dragonboat team. How can I help you with the fitness data today?")
+    .map(msg => ({
+      role: msg.role === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.content }]
+    }));
+
+  const chat = model.startChat({
+    history: contents,
+  });
+
+  const result = await chat.sendMessageStream(prompt);
+  for await (const chunk of result.stream) {
+    yield chunk.text();
+  }
+};
+
 export const getGeminiResponse = async (apiKey: string, prompt: string, history: ChatMessage[], paddlers: FitnessMetrics[]) => {
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({
@@ -33,8 +57,6 @@ export const getGeminiResponse = async (apiKey: string, prompt: string, history:
     systemInstruction: createChatbotContext(paddlers)
   });
 
-  // Convert app history format to Gemini history format
-  // Note: We skip the very first 'bot' greeting usually, and Gemini history should start with 'user' or 'model'
   const contents = history
     .filter(msg => msg.content !== "Ready to analyze your dragonboat team. How can I help you with the fitness data today?")
     .map(msg => ({
