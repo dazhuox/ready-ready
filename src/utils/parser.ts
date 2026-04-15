@@ -1,4 +1,4 @@
-import { FitnessMetrics, Gender } from '../data/types';
+import { FitnessMetrics, Gender, PaddlingSide } from '../data/types';
 
 export const parseRawFitnessData = (rawText: string, name: string = "Unknown Paddler"): FitnessMetrics => {
     const getMatch = (regex: RegExp, text: string) => {
@@ -56,6 +56,7 @@ export const parseRawFitnessData = (rawText: string, name: string = "Unknown Pad
     return {
         name,
         gender: genderMatch,
+        paddlingSide: 'right' as PaddlingSide, // Cannot be inferred from raw text; update manually in paddlers.json
         bodyWeight: bodyWeight ? parseFloat(bodyWeight) : null,
         mobilityHipFlexion: mobility as any,
         stabilityRotatorCuff: stability as any,

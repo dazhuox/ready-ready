@@ -48,9 +48,14 @@ const MessageBubble = ({ role, content, isLoading }: { role: 'user' | 'bot'; con
     );
 };
 
+interface BotUIProps {
+    messages: { role: 'user' | 'bot'; content: string }[];
+    setMessages: React.Dispatch<React.SetStateAction<{ role: 'user' | 'bot'; content: string }[]>>;
+}
+
 /* ── Main BotUI Component ────────────────────────── */
-const BotUI = () => {
-    const [messages, setMessages] = useState<{ role: 'user' | 'bot'; content: string }[]>([]);
+const BotUI = ({ messages, setMessages }: BotUIProps) => {
+
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [paddlers, setPaddlers] = useState<FitnessMetrics[]>(initialPaddlers as FitnessMetrics[]);
@@ -70,9 +75,13 @@ const BotUI = () => {
             setIsLargeScreen(width > 1440);
         };
         window.addEventListener('resize', handleResize);
+
         const params = new URLSearchParams(window.location.search);
         if (params.get('mode') === 'admin') setIsAdmin(true);
-        return () => window.removeEventListener('resize', handleResize);
+        
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
     }, []);
 
     const scrollToLatestQuery = () => {
@@ -306,6 +315,16 @@ const BotUI = () => {
                             className="text-[11px] font-medium text-warmgray-500 hover:text-charcoal-700 px-2.5 py-1 rounded-md hover:bg-black/[0.04]"
                         >
                             <Download size={12} className="inline mr-1" />Export
+                        </button>
+                        <button
+                            onClick={() => {
+                                if (window.confirm('Are you sure you want to clear the entire chat history?')) {
+                                    setMessages([]);
+                                }
+                            }}
+                            className="text-[11px] font-medium text-red-500/80 hover:text-red-700 px-2.5 py-1 rounded-md hover:bg-red-500/[0.08]"
+                        >
+                            <X size={12} className="inline mr-1" />Clear Chat
                         </button>
                     </div>
                 </div>

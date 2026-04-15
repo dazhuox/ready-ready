@@ -12,17 +12,87 @@ const sidebarNavItems = [
     { icon: Users, label: 'Roster', id: 'roster' },
 ]
 
-const recentSessions = [
-    { label: 'General checkup', date: 'Today' },
-    { label: 'Sprint analysis', date: 'Yesterday' },
-    { label: 'Erg comparison', date: 'Mar 8' },
-]
+export interface ChatMessage {
+    role: 'user' | 'bot';
+    content: string;
+}
+
+export interface ChatSession {
+    id: string;
+    title: string;
+    date: string;
+    messages: ChatMessage[];
+}
 
 function App() {
     const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 1024)
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
     const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1440)
     const [activeTab, setActiveTab] = useState('chat')
+
+    const [sessions, setSessions] = useState<ChatSession[]>(() => {
+        try {
+            const saved = localStorage.getItem('ready_ready_sessions');
+            if (saved) return JSON.parse(saved);
+        } catch {}
+        return [];
+    });
+
+    const [activeSessionId, setActiveSessionId] = useState<string | null>(sessions.length > 0 ? sessions[0].id : null);
+
+    useEffect(() => {
+        if (sessions.length > 0) {
+            localStorage.setItem('ready_ready_sessions', JSON.stringify(sessions));
+        } else {
+            localStorage.removeItem('ready_ready_sessions');
+        }
+    }, [sessions]);
+
+    const handleNewChat = () => {
+        const newId = Date.now().toString();
+        const newSession: ChatSession = {
+            id: newId,
+            title: 'New Conversation',
+            date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+            messages: []
+        };
+        setSessions(prev => [newSession, ...prev].slice(0, 10)); // Max 10 limits
+        setActiveSessionId(newId);
+        if (isMobile) setSidebarOpen(false);
+    };
+
+    useEffect(() => {
+        if (sessions.length === 0) {
+            handleNewChat();
+        } else if (!activeSessionId) {
+            setActiveSessionId(sessions[0].id);
+        }
+    }, [sessions.length, activeSessionId]);
+
+    const activeSession = sessions.find(s => s.id === activeSessionId) || sessions[0];
+    const messages = activeSession ? activeSession.messages : [];
+
+    const setMessages = (action: React.SetStateAction<ChatMessage[]>) => {
+        setSessions(prev => {
+            const idx = prev.findIndex(s => s.id === activeSessionId);
+            if (idx === -1) return prev;
+            
+            const oldMessages = prev[idx].messages;
+            const newMessages = typeof action === 'function' ? action(oldMessages) : action;
+            
+            const updated = [...prev];
+            const title = (newMessages.length > 0 && prev[idx].title === 'New Conversation')
+                          ? newMessages[0].content.slice(0, 30) + '...'
+                          : prev[idx].title;
+            updated[idx] = { 
+                ...prev[idx], 
+                messages: newMessages, 
+                title, 
+                date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) 
+            };
+            return updated;
+        });
+    };
 
     useEffect(() => {
         const handleResize = () => {
@@ -115,7 +185,9 @@ function App() {
                 {/* New Conv button */}
                 {sidebarOpen && (
                     <div style={{ padding: '0 10px 8px' }}>
-                        <button style={{
+                        <button 
+                        onClick={handleNewChat}
+                        style={{
                             width: '100%',
                             display: 'flex',
                             alignItems: 'center',
@@ -164,58 +236,7 @@ function App() {
                     ))}
                 </nav>
 
-                {/* Recent */}
-                {sidebarOpen && (
-                    <div style={{
-                        padding: '12px 16px',
-                        borderTop: '1px solid rgba(0,0,0,0.04)',
-                    }}>
-                        <p style={{
-                            fontSize: 10,
-                            fontWeight: 600,
-                            textTransform: 'uppercase',
-                            letterSpacing: '0.12em',
-                            color: '#A0A0A0',
-                            marginBottom: 8,
-                        }}>
-                            Recent
-                        </p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            {recentSessions.map((s, i) => (
-                                <div key={i} style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 10,
-                                    padding: '5px 6px',
-                                    borderRadius: 6,
-                                    cursor: 'pointer',
-                                }}
-                                onClick={() => { if (isMobile) setSidebarOpen(false) }}
-                                className="hover:bg-black/[0.03] group"
-                                >
-                                    <div style={{
-                                        width: 6,
-                                        height: 6,
-                                        borderRadius: '50%',
-                                        background: '#C0C0C0',
-                                        flexShrink: 0,
-                                    }} />
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                        <p style={{
-                                            fontSize: 12,
-                                            color: '#4A4A4A',
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap',
-                                            lineHeight: 1.3,
-                                        }}>{s.label}</p>
-                                        <p style={{ fontSize: 10, color: '#A0A0A0', lineHeight: 1.2 }}>{s.date}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
+
 
                 {/* Settings */}
                 <div style={{
@@ -262,7 +283,7 @@ function App() {
                     </button>
                 )}
 
-                <BotUI />
+                <BotUI messages={messages} setMessages={setMessages} />
             </div>
         </div>
     )

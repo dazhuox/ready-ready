@@ -1,8 +1,10 @@
 export type Gender = 'male' | 'female';
+export type PaddlingSide = 'left' | 'right';
 
 export interface FitnessMetrics {
     name: string;
     gender: Gender;
+    paddlingSide: PaddlingSide;
     bodyWeight: number | null;
 
     // Mobility/Stability (Pass/Fail)
