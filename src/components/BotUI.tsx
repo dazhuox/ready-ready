@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, User, Bot, Upload, X, Save, Download, ShieldCheck, ArrowUp } from 'lucide-react';
 import { FitnessMetrics } from '../data/types';
 import { parseRawFitnessData } from '../utils/parser';
-import { getGeminiStream, createChatbotContext } from '../data/gemini';
+import { getGeminiStream, streamFromProxy } from '../data/gemini';
 import initialPaddlers from '../data/paddlers.json';
 
 /* ── Typing Indicator Component ──────────────────── */
@@ -61,7 +61,8 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
     const [paddlers, setPaddlers] = useState<FitnessMetrics[]>(initialPaddlers as FitnessMetrics[]);
     const [showIntake, setShowIntake] = useState(false);
     const [rawIntake, setRawIntake] = useState('');
-    const [apiKey, setApiKey] = useState(import.meta.env.VITE_GEMINI_API_KEY || '');
+    // Local dev fallback: use VITE_GEMINI_API_KEY if available, otherwise proxy through /api/chat
+    const localApiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
     const [isAdmin, setIsAdmin] = useState(false);
     const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 640);
     const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1440);
@@ -137,18 +138,11 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
         ]);
         setIsLoading(true);
 
-        if (!apiKey) {
-            setMessages(prev => {
-                const updated = [...prev];
-                updated[updated.length - 1] = { role: 'bot', content: 'API Key is missing. Please check your .env configuration.' };
-                return updated;
-            });
-            setIsLoading(false);
-            return;
-        }
-
         try {
-            const stream = await getGeminiStream(apiKey, userMsg, currentHistory, paddlers);
+            // Auto-detect: use direct SDK locally (VITE_ key), proxy in production
+            const stream = localApiKey
+                ? getGeminiStream(localApiKey, userMsg, currentHistory, paddlers)
+                : streamFromProxy(userMsg, currentHistory);
 
             let fullText = '';
             let isFirstChunk = true;
@@ -172,7 +166,7 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
         } catch (error) {
             setMessages(prev => {
                 const updated = [...prev];
-                updated[updated.length - 1] = { role: 'bot', content: 'Something went wrong. Please check your API key and try again.' };
+                updated[updated.length - 1] = { role: 'bot', content: 'Something went wrong. Please try again.' };
                 return updated;
             });
             setIsLoading(false);
@@ -296,13 +290,6 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
                     <ShieldCheck size={14} className="text-charcoal-500" />
                     <span className="text-[11px] text-warmgray-500 font-medium">Admin</span>
                     <div className="flex-1 md:flex-none" />
-                    <input
-                        type="password"
-                        placeholder="API Key"
-                        className="bg-white/70 border border-black/[0.06] rounded-md px-2.5 py-1 text-[11px] outline-none focus:border-charcoal-300 text-charcoal-700 w-full sm:w-40"
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                    />
                     <div className="flex gap-2">
                         <button
                             onClick={() => setShowIntake(true)}
