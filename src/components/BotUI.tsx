@@ -1,10 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, User, Bot, Upload, X, Save, Download, ShieldCheck, ArrowUp } from 'lucide-react';
+import { Bot, Upload, X, Save, Download, ShieldCheck, ArrowUp } from 'lucide-react';
 import { FitnessMetrics } from '../data/types';
 import { parseRawFitnessData } from '../utils/parser';
 import { getGeminiStream, streamFromProxy } from '../data/gemini';
-import initialPaddlers from '../data/paddlers.json';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Badge } from '@/components/ui/badge';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from '@/components/ui/dialog';
+
 
 /* ── Typing Indicator Component ──────────────────── */
 const TypingIndicator = () => (
@@ -51,14 +62,15 @@ const MessageBubble = ({ role, content, isLoading }: { role: 'user' | 'bot'; con
 interface BotUIProps {
     messages: { role: 'user' | 'bot'; content: string }[];
     setMessages: React.Dispatch<React.SetStateAction<{ role: 'user' | 'bot'; content: string }[]>>;
+    paddlers: FitnessMetrics[];
+    setPaddlers: React.Dispatch<React.SetStateAction<FitnessMetrics[]>>;
 }
 
 /* ── Main BotUI Component ────────────────────────── */
-const BotUI = ({ messages, setMessages }: BotUIProps) => {
+const BotUI = ({ messages, setMessages, paddlers, setPaddlers }: BotUIProps) => {
 
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [paddlers, setPaddlers] = useState<FitnessMetrics[]>(initialPaddlers as FitnessMetrics[]);
     const [showIntake, setShowIntake] = useState(false);
     const [rawIntake, setRawIntake] = useState('');
     // Local dev fallback: use VITE_GEMINI_API_KEY if available, otherwise proxy through /api/chat
@@ -99,9 +111,6 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
     const userMessageCount = messages.filter(m => m.role === 'user').length;
 
     useEffect(() => {
-        // Only trigger the auto-scroll when a new USER message is added.
-        // This prevents the scroll-to-top logic from recalculating and jittering 
-        // when the bot's answer is printed.
         if (userMessageCount > 0) {
             const timeout = setTimeout(() => {
                 scrollToLatestQuery();
@@ -124,13 +133,11 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
         const userMsg = input.trim();
         setInput('');
 
-        // Save the history state specifically needed for Gemini before we add the placeholder bot message
         const currentHistory: { role: 'user' | 'bot'; content: string }[] = [
             ...messages,
             { role: 'user', content: userMsg }
         ];
 
-        // Append the user's message AND an empty bot placeholder to strictly preserve the DOM node
         setMessages(prev => [
             ...prev,
             { role: 'user', content: userMsg },
@@ -139,7 +146,6 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
         setIsLoading(true);
 
         try {
-            // Auto-detect: use direct SDK locally (VITE_ key), proxy in production
             const stream = localApiKey
                 ? getGeminiStream(localApiKey, userMsg, currentHistory, paddlers)
                 : streamFromProxy(userMsg, currentHistory);
@@ -151,7 +157,6 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
                     setIsLoading(false);
                     isFirstChunk = false;
                 }
-                // Distribute the chunk character-by-character for a smooth typing effect
                 for (let i = 0; i < chunk.length; i++) {
                     fullText += chunk[i];
                     setMessages(prev => {
@@ -159,7 +164,6 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
                         updated[updated.length - 1] = { role: 'bot', content: fullText };
                         return updated;
                     });
-                    // 10ms per character = ~100 characters per second. Extremely smooth.
                     await new Promise(resolve => setTimeout(resolve, 8));
                 }
             }
@@ -240,33 +244,26 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
                         fontFamily: 'inherit',
                     }}
                 />
-                <button
+                <Button
                     onClick={handleSend}
                     disabled={!input.trim() || isLoading}
+                    size="icon"
+                    variant={input.trim() && !isLoading ? 'default' : 'secondary'}
+                    className="shrink-0 rounded-xl"
                     style={{
-                        flexShrink: 0,
                         width: isLargeScreen ? 40 : 36,
                         height: isLargeScreen ? 40 : 36,
-                        borderRadius: 12,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        background: input.trim() && !isLoading ? '#2D3436' : '#F3F4F6',
-                        color: input.trim() && !isLoading ? '#ffffff' : '#BCBCBC',
-                        cursor: input.trim() && !isLoading ? 'pointer' : 'not-allowed',
-                        transition: 'all 0.2s ease',
                     }}
+                    aria-label="Send message"
                 >
                     <ArrowUp size={isLargeScreen ? 18 : 16} strokeWidth={2.5} />
-                </button>
+                </Button>
             </div>
         </motion.div>
     );
 
     const hasMessages = messages.length > 0;
 
-    // Group messages into conversational turns so we can apply min-height to the last turn.
-    // This allows the last query to smoothly hit the top of the page without creating excess scrollable void.
     const groupedTurns: { user: any, bots: any[] }[] = [];
     let currentTurn: { user: any, bots: any[] } | null = null;
 
@@ -277,7 +274,6 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
         } else if (currentTurn) {
             currentTurn.bots.push(m);
         } else {
-            // Edge case: Bot message without a leading user message
             groupedTurns.push({ user: null, bots: [m] });
         }
     });
@@ -288,31 +284,37 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
             {isAdmin && (
                 <div className="flex flex-wrap items-center gap-2 px-5 py-2 bg-cream-100/60 border-b border-black/[0.04]">
                     <ShieldCheck size={14} className="text-charcoal-500" />
-                    <span className="text-[11px] text-warmgray-500 font-medium">Admin</span>
+                    <Badge variant="secondary" className="text-[10px] py-0 px-2">Admin</Badge>
                     <div className="flex-1 md:flex-none" />
-                    <div className="flex gap-2">
-                        <button
+                    <div className="flex gap-1.5">
+                        <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => setShowIntake(true)}
-                            className="text-[11px] font-medium text-charcoal-700 hover:text-black px-2.5 py-1 rounded-md hover:bg-black/[0.04]"
+                            className="h-7 text-[11px] text-charcoal-700 gap-1"
                         >
-                            <Upload size={12} className="inline mr-1" />Intake
-                        </button>
-                        <button
+                            <Upload size={12} />Intake
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={exportJSON}
-                            className="text-[11px] font-medium text-warmgray-500 hover:text-charcoal-700 px-2.5 py-1 rounded-md hover:bg-black/[0.04]"
+                            className="h-7 text-[11px] text-warmgray-500 gap-1"
                         >
-                            <Download size={12} className="inline mr-1" />Export
-                        </button>
-                        <button
+                            <Download size={12} />Export
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => {
                                 if (window.confirm('Are you sure you want to clear the entire chat history?')) {
                                     setMessages([]);
                                 }
                             }}
-                            className="text-[11px] font-medium text-red-500/80 hover:text-red-700 px-2.5 py-1 rounded-md hover:bg-red-500/[0.08]"
+                            className="h-7 text-[11px] text-red-500/80 hover:text-red-700 hover:bg-red-500/[0.08] gap-1"
                         >
-                            <X size={12} className="inline mr-1" />Clear Chat
-                        </button>
+                            <X size={12} />Clear Chat
+                        </Button>
                     </div>
                 </div>
             )}
@@ -345,36 +347,15 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
                                 'Who needs to improve their run?',
                                 'Show the 2026 cut standards',
                             ].map((q, i) => (
-                                <button
+                                <Button
                                     key={i}
+                                    variant="outline"
+                                    size="sm"
                                     onClick={() => setInput(q)}
-                                    style={{
-                                        textAlign: 'left',
-                                        padding: '6px 14px',
-                                        borderRadius: 20,
-                                        border: '1px solid rgba(0,0,0,0.08)',
-                                        background: 'rgba(255,255,255,0.6)',
-                                        fontSize: 12,
-                                        color: '#636E72',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.15s',
-                                        fontFamily: 'inherit',
-                                    }}
-                                    onMouseEnter={e => {
-                                        const btn = e.currentTarget as HTMLButtonElement;
-                                        btn.style.background = '#ffffff';
-                                        btn.style.borderColor = 'rgba(0,0,0,0.15)';
-                                        btn.style.color = '#2D3436';
-                                    }}
-                                    onMouseLeave={e => {
-                                        const btn = e.currentTarget as HTMLButtonElement;
-                                        btn.style.background = 'rgba(255,255,255,0.6)';
-                                        btn.style.borderColor = 'rgba(0,0,0,0.08)';
-                                        btn.style.color = '#636E72';
-                                    }}
+                                    className="rounded-full text-xs text-warmgray-600 hover:text-charcoal-800 h-7"
                                 >
                                     {q}
-                                </button>
+                                </Button>
                             ))}
                         </div>
                     </div>
@@ -395,8 +376,7 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
                                     {turn.user && (
                                         <MessageBubble role="user" content={turn.user.content} />
                                     )}
-                                    {turn.bots.map((botMsg, i) => {
-                                        // The bot message is 'loading' only if it's the very last one, its content is empty, and the app is officially in a loading state
+                                    {turn.bots.map((botMsg: any, i: number) => {
                                         const isBotLoading = isLoading && isLastTurn && i === turn.bots.length - 1 && botMsg.content === '';
                                         return (
                                             <MessageBubble
@@ -410,7 +390,7 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
                                 </div>
                             );
                         })}
-                        {/* Bottom spacer ensures the last message isn't hidden behind the fixed input box */}
+                        {/* Bottom spacer */}
                         <div ref={messagesEndRef} className="h-[150px] w-full shrink-0" />
                     </div>
                 )}
@@ -447,56 +427,42 @@ const BotUI = ({ messages, setMessages }: BotUIProps) => {
                 </div>
             )}
 
-            {/* ── Intake Modal ───────────────────────────── */}
-            <AnimatePresence>
-                {showIntake && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/20 backdrop-blur-sm"
-                    >
-                        <motion.div
-                            initial={{ scale: 0.97, y: 8 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.97, opacity: 0 }}
-                            className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 border border-black/[0.04]"
+            {/* ── Intake Modal (shadcn Dialog) ────────────── */}
+            <Dialog open={showIntake} onOpenChange={setShowIntake}>
+                <DialogContent className="max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <Upload size={18} className="text-sage-500" /> Smart Data Intake
+                        </DialogTitle>
+                        <DialogDescription>
+                            Paste raw text notes for a single paddler. The parser will extract all 2026 standardized metrics.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <Textarea
+                        value={rawIntake}
+                        onChange={(e) => setRawIntake(e.target.value)}
+                        className="h-40 bg-cream-50 font-mono text-[13px]"
+                        placeholder="Mobility - Hip Flexion: Bonus... Total: 18 pts"
+                    />
+
+                    <DialogFooter>
+                        <Button
+                            variant="outline"
+                            onClick={() => setShowIntake(false)}
                         >
-                            <div className="flex justify-between items-center">
-                                <h3 className="text-base font-bold flex items-center gap-2 text-charcoal-800">
-                                    <Upload size={18} className="text-sage-500" /> Smart Data Intake
-                                </h3>
-                                <button onClick={() => setShowIntake(false)} className="text-warmgray-400 hover:text-charcoal-700 p-1 rounded-md hover:bg-black/[0.04]">
-                                    <X size={18} />
-                                </button>
-                            </div>
-                            <p className="text-warmgray-500 text-[13px] leading-relaxed">
-                                Paste raw text notes for a single paddler. The parser will extract all 2026 standardized metrics.
-                            </p>
-                            <textarea
-                                value={rawIntake}
-                                onChange={(e) => setRawIntake(e.target.value)}
-                                className="w-full h-40 bg-cream-50 border border-black/[0.06] rounded-xl p-3.5 text-[13px] font-mono focus:outline-none focus:border-sage-500/40 focus:ring-2 focus:ring-sage-500/8 text-charcoal-700 resize-none"
-                                placeholder="Mobility - Hip Flexion: Bonus... Total: 18 pts"
-                            />
-                            <div className="flex justify-end gap-2.5 pt-1">
-                                <button
-                                    onClick={() => setShowIntake(false)}
-                                    className="px-4 py-2 rounded-lg border border-black/[0.06] text-warmgray-500 hover:bg-cream-100 text-[13px] font-medium"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleIntakeSave}
-                                    className="px-4 py-2 rounded-lg bg-sage-500 text-white font-semibold hover:bg-sage-600 flex items-center gap-1.5 shadow-sm text-[13px]"
-                                >
-                                    <Save size={14} /> Parse & Save
-                                </button>
-                            </div>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="sage"
+                            onClick={handleIntakeSave}
+                            className="gap-1.5"
+                        >
+                            <Save size={14} /> Parse & Save
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };

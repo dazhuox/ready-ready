@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import BotUI from './components/BotUI'
+import HomePage from './pages/HomePage'
+import AnalyticsPage from './pages/AnalyticsPage'
+import RosterPage from './pages/RosterPage'
+import { Button } from '@/components/ui/button'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import {
     MessageSquare, Home, BarChart3, Users, Settings,
     PanelLeftOpen, PanelLeftClose, Plus, Menu
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { FitnessMetrics } from './data/types'
+import initialPaddlers from './data/paddlers.json'
 
 const sidebarNavItems = [
     { icon: MessageSquare, label: 'AI Chat', id: 'chat' },
@@ -30,6 +38,10 @@ function App() {
     const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 1440)
     const [activeTab, setActiveTab] = useState('chat')
 
+    // ── Shared paddlers state (lifted from BotUI) ─────────
+    const [paddlers, setPaddlers] = useState<FitnessMetrics[]>(initialPaddlers as FitnessMetrics[])
+
+    // ── Chat sessions ─────────────────────────────────────
     const [sessions, setSessions] = useState<ChatSession[]>(() => {
         try {
             const saved = localStorage.getItem('ready_ready_sessions');
@@ -56,7 +68,7 @@ function App() {
             date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
             messages: []
         };
-        setSessions(prev => [newSession, ...prev].slice(0, 10)); // Max 10 limits
+        setSessions(prev => [newSession, ...prev].slice(0, 10));
         setActiveSessionId(newId);
         if (isMobile) setSidebarOpen(false);
     };
@@ -76,19 +88,17 @@ function App() {
         setSessions(prev => {
             const idx = prev.findIndex(s => s.id === activeSessionId);
             if (idx === -1) return prev;
-            
             const oldMessages = prev[idx].messages;
             const newMessages = typeof action === 'function' ? action(oldMessages) : action;
-            
             const updated = [...prev];
             const title = (newMessages.length > 0 && prev[idx].title === 'New Conversation')
                           ? newMessages[0].content.slice(0, 30) + '...'
                           : prev[idx].title;
-            updated[idx] = { 
-                ...prev[idx], 
-                messages: newMessages, 
-                title, 
-                date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) 
+            updated[idx] = {
+                ...prev[idx],
+                messages: newMessages,
+                title,
+                date: new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
             };
             return updated;
         });
@@ -99,11 +109,8 @@ function App() {
             const width = window.innerWidth
             setIsMobile(width < 768)
             setIsLargeScreen(width > 1440)
-            if (width < 768) {
-                setSidebarOpen(false)
-            } else if (width > 1024) {
-                setSidebarOpen(true)
-            }
+            if (width < 768) setSidebarOpen(false)
+            else if (width > 1024) setSidebarOpen(true)
         }
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
@@ -112,180 +119,125 @@ function App() {
     const sidebarWidth = sidebarOpen ? (isLargeScreen ? 280 : 248) : (isMobile ? 0 : 64)
 
     return (
+        <TooltipProvider>
         <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', position: 'relative' }}>
 
-            {/* ── Sidebar Overlay (Mobile only) ────────────── */}
+            {/* ── Mobile overlay ────────────── */}
             {isMobile && sidebarOpen && (
-                <div 
+                <div
                     onClick={() => setSidebarOpen(false)}
-                    style={{
-                        position: 'absolute',
-                        inset: 0,
-                        backgroundColor: 'rgba(0,0,0,0.2)',
-                        backdropFilter: 'blur(2px)',
-                        zIndex: 40,
-                    }}
+                    style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.2)', backdropFilter: 'blur(2px)', zIndex: 40 }}
                 />
             )}
 
-            {/* ── Sidebar ─────────────────────────────────── */}
+            {/* ── Sidebar ──────────────────── */}
             <aside style={{
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%',
-                width: sidebarWidth,
-                flexShrink: 0,
+                display: 'flex', flexDirection: 'column', height: '100%',
+                width: sidebarWidth, flexShrink: 0,
                 borderRight: '1px solid rgba(0,0,0,0.04)',
                 background: 'rgba(255,255,255,0.95)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
+                backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)',
                 transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 overflow: 'hidden',
-                position: isMobile ? 'absolute' : 'relative',
-                zIndex: 50,
-                left: 0,
+                position: isMobile ? 'absolute' : 'relative', zIndex: 50, left: 0,
             }}>
-
                 {/* Logo row */}
-                <div style={{
-                    height: 56,
-                    display: 'flex',
-                    alignItems: 'center',
-                    padding: sidebarOpen ? '0 12px 0 16px' : '0',
-                    justifyContent: sidebarOpen ? 'space-between' : 'center',
-                    flexShrink: 0,
-                }}>
+                <div style={{ height: 56, display: 'flex', alignItems: 'center', padding: sidebarOpen ? '0 12px 0 16px' : '0', justifyContent: sidebarOpen ? 'space-between' : 'center', flexShrink: 0 }}>
                     {sidebarOpen && (
-                        <h1 className="premium-gradient-text" style={{
-                            fontSize: 17,
-                            fontWeight: 800,
-                            letterSpacing: '-0.03em',
-                            lineHeight: 1,
-                        }}>
+                        <h1 className="premium-gradient-text" style={{ fontSize: 17, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1 }}>
                             Ready Ready
                         </h1>
                     )}
-                    <button
-                        onClick={() => setSidebarOpen(!sidebarOpen)}
-                        style={{
-                            padding: '6px',
-                            borderRadius: 8,
-                            color: '#A0A0A0',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}
-                        className="hover:bg-black/[0.04] hover:text-charcoal-600"
-                        title={sidebarOpen ? 'Collapse' : 'Expand'}
-                    >
-                        {sidebarOpen ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
-                    </button>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon-sm" onClick={() => setSidebarOpen(!sidebarOpen)} aria-label={sidebarOpen ? 'Collapse' : 'Expand'}>
+                                {sidebarOpen ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">{sidebarOpen ? 'Collapse' : 'Expand'}</TooltipContent>
+                    </Tooltip>
                 </div>
 
-                {/* New Conv button */}
+                {/* New chat button */}
                 {sidebarOpen && (
                     <div style={{ padding: '0 10px 8px' }}>
-                        <button 
-                        onClick={handleNewChat}
-                        style={{
-                            width: '100%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
-                            padding: '8px 12px',
-                            borderRadius: 10,
-                            border: '1px solid rgba(0,0,0,0.07)',
-                            background: 'rgba(255,255,255,0.85)',
-                            color: '#4A4A4A',
-                            fontSize: 13,
-                            fontWeight: 500,
-                            cursor: 'pointer',
-                            transition: 'all 0.15s',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-                        }}
-                        className="hover:bg-white"
-                        >
-                            <Plus size={14} style={{ color: '#A0A0A0', flexShrink: 0 }} />
+                        <Button variant="outline" size="sm" onClick={handleNewChat} className="w-full justify-start gap-2 text-charcoal-600 font-medium">
+                            <Plus size={14} className="text-warmgray-400 shrink-0" />
                             New conversation
-                        </button>
+                        </Button>
                     </div>
                 )}
 
                 {/* Nav items */}
                 <nav style={{ flex: 1, padding: sidebarOpen ? '4px 8px 0' : '4px 6px 0' }}>
-                    {sidebarNavItems.map(item => (
-                        <button
-                            key={item.id}
-                            onClick={() => {
-                                setActiveTab(item.id)
-                                if (isMobile) setSidebarOpen(false)
-                            }}
-                            title={item.label}
-                            className={`sidebar-nav-item ${activeTab === item.id ? 'active' : ''}`}
-                            style={{
-                                width: '100%',
-                                justifyContent: (sidebarOpen || isMobile) ? 'flex-start' : 'center',
-                                paddingLeft: sidebarOpen ? undefined : 0,
-                                paddingRight: sidebarOpen ? undefined : 0,
-                                gap: sidebarOpen ? undefined : 0,
-                            }}
-                        >
-                            <item.icon size={18} strokeWidth={activeTab === item.id ? 2.2 : 1.8} />
-                            {(sidebarOpen || (isMobile && sidebarOpen)) && <span>{item.label}</span>}
-                        </button>
-                    ))}
+                    {sidebarNavItems.map(item => {
+                        const navBtn = (
+                            <button
+                                key={item.id}
+                                onClick={() => { setActiveTab(item.id); if (isMobile) setSidebarOpen(false); }}
+                                aria-label={item.label}
+                                className={cn('sidebar-nav-item w-full', activeTab === item.id && 'active', sidebarOpen ? 'justify-start' : 'justify-center px-0 gap-0')}
+                            >
+                                <item.icon size={18} strokeWidth={activeTab === item.id ? 2.2 : 1.8} />
+                                {sidebarOpen && <span>{item.label}</span>}
+                            </button>
+                        );
+                        if (!sidebarOpen) {
+                            return (
+                                <Tooltip key={item.id}>
+                                    <TooltipTrigger asChild>{navBtn}</TooltipTrigger>
+                                    <TooltipContent side="right">{item.label}</TooltipContent>
+                                </Tooltip>
+                            );
+                        }
+                        return navBtn;
+                    })}
                 </nav>
 
-
-
                 {/* Settings */}
-                <div style={{
-                    padding: sidebarOpen ? '8px 8px 12px' : '8px 6px 12px',
-                    borderTop: '1px solid rgba(0,0,0,0.04)',
-                }}>
-                    <button
-                        className="sidebar-nav-item"
-                        title="Settings"
-                        style={{
-                            width: '100%',
-                            justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                            paddingLeft: sidebarOpen ? undefined : 0,
-                            paddingRight: sidebarOpen ? undefined : 0,
-                            gap: sidebarOpen ? undefined : 0,
-                        }}
-                    >
-                        <Settings size={18} strokeWidth={1.8} />
-                        {sidebarOpen && <span>Settings</span>}
-                    </button>
+                <div style={{ padding: sidebarOpen ? '8px 8px 12px' : '8px 6px 12px', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+                    {sidebarOpen ? (
+                        <button className="sidebar-nav-item w-full justify-start" aria-label="Settings">
+                            <Settings size={18} strokeWidth={1.8} />
+                            <span>Settings</span>
+                        </button>
+                    ) : (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <button className="sidebar-nav-item w-full justify-center px-0 gap-0" aria-label="Settings">
+                                    <Settings size={18} strokeWidth={1.8} />
+                                </button>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">Settings</TooltipContent>
+                        </Tooltip>
+                    )}
                 </div>
             </aside>
 
-            {/* ── Main Content ───────────────────────────── */}
+            {/* ── Main Content ─────────────── */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', position: 'relative' }}>
-                
-                {/* Mobile Header Toggle */}
+
                 {isMobile && !sidebarOpen && (
-                    <button 
-                        onClick={() => setSidebarOpen(true)}
-                        style={{
-                            position: 'absolute',
-                            top: 12,
-                            left: 12,
-                            zIndex: 30,
-                            padding: '8px',
-                            background: 'white',
-                            borderRadius: '10px',
-                            boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-                            border: '1px solid rgba(0,0,0,0.05)',
-                        }}
-                    >
-                        <Menu size={20} className="text-charcoal-600" />
-                    </button>
+                    <Button variant="outline" size="icon-sm" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar"
+                        style={{ position: 'absolute', top: 12, left: 12, zIndex: 30 }}>
+                        <Menu size={16} />
+                    </Button>
                 )}
 
-                <BotUI messages={messages} setMessages={setMessages} />
+                {activeTab === 'chat' && (
+                    <BotUI
+                        messages={messages}
+                        setMessages={setMessages}
+                        paddlers={paddlers}
+                        setPaddlers={setPaddlers}
+                    />
+                )}
+                {activeTab === 'home' && <HomePage paddlers={paddlers} />}
+                {activeTab === 'analytics' && <AnalyticsPage paddlers={paddlers} />}
+                {activeTab === 'roster' && <RosterPage paddlers={paddlers} />}
             </div>
         </div>
+        </TooltipProvider>
     )
 }
 
