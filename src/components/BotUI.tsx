@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bot, Upload, X, Save, Download, ShieldCheck, ArrowUp } from 'lucide-react';
+import { Bot, Upload, X, Save, Download, ShieldCheck, ArrowUp, Send } from 'lucide-react';
 import { FitnessMetrics } from '../data/types';
 import { parseRawFitnessData } from '../utils/parser';
 import { getGeminiStream, streamFromProxy } from '../data/gemini';
@@ -42,16 +42,25 @@ const MessageBubble = ({ role, content, isLoading }: { role: 'user' | 'bot'; con
                 {/* Bubble */}
                 {isUser ? (
                     <div
-                        className="bg-[#F3F2EB] rounded-2xl max-w-[75%] shadow-sm"
-                        style={{ padding: '8px 12px' }}
+                        className="bg-sage-600 text-white shadow-sm"
+                        style={{ padding: '12px 18px', borderRadius: '20px 20px 6px 20px' }}
                     >
-                        <div className="msg-prose text-[15px] text-[#2D3436] leading-[1.6] whitespace-pre-wrap">
+                        <div className="msg-prose text-[15px] leading-[1.6] whitespace-pre-wrap">
                             {content}
                         </div>
                     </div>
                 ) : (
-                    <div className="msg-prose text-[15px] leading-[1.6] whitespace-pre-wrap text-charcoal-800 pt-1 flex-1">
-                        {isLoading ? <TypingIndicator /> : content}
+                    <div className="flex-1">
+                        {/* Ready Bot label */}
+                        <div className="flex items-center gap-2 mb-2">
+                            <div className="w-6 h-6 rounded-md bg-sage-500/10 flex items-center justify-center">
+                                <Bot size={14} className="text-sage-600" />
+                            </div>
+                            <span className="text-sm font-bold text-charcoal-800">Ready Bot</span>
+                        </div>
+                        <div className="msg-prose text-[15px] leading-[1.6] whitespace-pre-wrap text-charcoal-800">
+                            {isLoading ? <TypingIndicator /> : content}
+                        </div>
                     </div>
                 )}
             </div>
@@ -202,11 +211,18 @@ const BotUI = ({ messages, setMessages, paddlers, setPaddlers }: BotUIProps) => 
         a.remove();
     };
 
+    const SUGGESTIONS = [
+        'Who has the highest score?',
+        'Compare team defense stats',
+        'Identify top performers',
+        'Analyze paddler metrics',
+    ];
+
     const renderInput = (isCentered: boolean) => (
         <motion.div
             layoutId="search-container"
             style={{
-                maxWidth: isLargeScreen ? 820 : 720,
+                maxWidth: 720,
                 margin: '0 auto',
                 width: '100%',
                 padding: isCentered ? (isSmallScreen ? '0 16px' : '0') : '0'
@@ -215,12 +231,12 @@ const BotUI = ({ messages, setMessages, paddlers, setPaddlers }: BotUIProps) => 
             <div style={{
                 display: 'flex',
                 alignItems: 'flex-end',
-                gap: 12,
-                background: isCentered ? '#ffffff' : '#f8f9fa',
-                border: '1px solid rgba(0,0,0,0.08)',
-                borderRadius: 22,
-                padding: isLargeScreen ? '14px 16px 14px 20px' : '8px 12px 8px 16px',
-                boxShadow: isCentered ? '0 8px 32px rgba(0,0,0,0.06)' : 'none',
+                gap: 10,
+                background: '#ffffff',
+                border: '1px solid rgba(0,0,0,0.06)',
+                borderRadius: 24,
+                padding: '10px 14px 10px 20px',
+                boxShadow: isCentered ? '0 12px 40px rgba(0,0,0,0.06)' : '0 4px 20px rgba(0,0,0,0.04)',
                 transition: 'all 0.3s ease',
             }}>
                 <textarea
@@ -236,28 +252,35 @@ const BotUI = ({ messages, setMessages, paddlers, setPaddlers }: BotUIProps) => 
                         border: 'none',
                         outline: 'none',
                         resize: 'none',
-                        fontSize: isLargeScreen ? 16 : 15,
+                        fontSize: 15,
                         color: '#2D3436',
                         lineHeight: 1.5,
-                        padding: '8px 0',
+                        padding: '6px 0',
                         maxHeight: 200,
                         fontFamily: 'inherit',
                     }}
                 />
-                <Button
+                {/* Upload button */}
+                <button
+                    onClick={() => setShowIntake(true)}
+                    className="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl text-warmgray-400 hover:text-charcoal-600 hover:bg-black/[0.04] transition-all"
+                    title="Upload data"
+                >
+                    <Upload size={16} />
+                </button>
+                {/* Send button */}
+                <button
                     onClick={handleSend}
                     disabled={!input.trim() || isLoading}
-                    size="icon"
-                    variant={input.trim() && !isLoading ? 'default' : 'secondary'}
-                    className="shrink-0 rounded-xl"
-                    style={{
-                        width: isLargeScreen ? 40 : 36,
-                        height: isLargeScreen ? 40 : 36,
-                    }}
+                    className={`shrink-0 w-9 h-9 flex items-center justify-center rounded-xl transition-all ${
+                        input.trim() && !isLoading
+                            ? 'bg-sage-600 text-white shadow-sm hover:bg-sage-700'
+                            : 'bg-black/[0.05] text-warmgray-300 cursor-not-allowed'
+                    }`}
                     aria-label="Send message"
                 >
-                    <ArrowUp size={isLargeScreen ? 18 : 16} strokeWidth={2.5} />
-                </Button>
+                    <Send size={16} />
+                </button>
             </div>
         </motion.div>
     );
@@ -326,73 +349,73 @@ const BotUI = ({ messages, setMessages, paddlers, setPaddlers }: BotUIProps) => 
             >
                 {!hasMessages ? (
                     /* ── Welcome State: Centered Input ─────── */
-                    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 max-w-4xl w-full select-none" style={{ marginTop: isSmallScreen ? '0' : '-60px' }}>
-                        <div className={`rounded-2xl bg-black/[0.04] flex items-center justify-center mb-6 ${isLargeScreen ? 'w-16 h-16' : 'w-12 h-12'}`}>
-                            <Bot size={isLargeScreen ? 32 : 22} className="text-charcoal-600" strokeWidth={1.6} />
-                        </div>
-                        <h2 className={`${isLargeScreen ? 'text-4xl' : 'text-xl sm:text-2xl'} font-bold text-charcoal-800 mb-6 sm:mb-8 tracking-tight text-center`}>
-                            Ready Ready
+                    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 max-w-4xl w-full select-none" style={{ marginTop: isSmallScreen ? '0' : '-40px' }}>
+                        <h2 className="text-3xl md:text-4xl font-bold text-charcoal-800 mb-8 tracking-tight text-center"
+                            style={{ fontFamily: 'Playfair Display, serif' }}>
+                            Current Chat
                         </h2>
 
                         {/* Centered Input Area */}
-                        <div className="w-full mb-8 max-w-lg sm:max-w-none">
+                        <div className="w-full mb-6 max-w-lg sm:max-w-none">
                             {renderInput(true)}
                         </div>
 
                         {/* Suggestions row below input */}
                         <div className="flex flex-wrap justify-center gap-2 max-w-2xl px-2">
-                            {[
-                                'Who has the highest deadlift?',
-                                'Compare the top 5 paddlers',
-                                'Who needs to improve their run?',
-                                'Show the 2026 cut standards',
-                            ].map((q, i) => (
-                                <Button
+                            {SUGGESTIONS.map((q, i) => (
+                                <button
                                     key={i}
-                                    variant="outline"
-                                    size="sm"
                                     onClick={() => setInput(q)}
-                                    className="rounded-full text-xs text-warmgray-600 hover:text-charcoal-800 h-7"
+                                    className="px-4 py-2 rounded-full text-xs font-medium border border-black/[0.08] text-warmgray-500 hover:text-charcoal-800 hover:border-sage-400/40 hover:bg-sage-50/50 transition-all"
                                 >
                                     {q}
-                                </Button>
+                                </button>
                             ))}
                         </div>
                     </div>
                 ) : (
                     /* ── Message List ─────────────────────── */
-                    <div
-                        className="w-full px-4 sm:px-6 flex flex-col mx-auto pt-[5vh] pb-4"
-                        style={{ maxWidth: isLargeScreen ? 600 : 420 }}
-                    >
-                        {groupedTurns.map((turn, index) => {
-                            const isLastTurn = index === groupedTurns.length - 1;
-                            return (
-                                <div
-                                    key={index}
-                                    className="flex flex-col w-full"
-                                    style={{ minHeight: isLastTurn ? 'calc(100vh - 150px)' : 'auto' }}
-                                >
-                                    {turn.user && (
-                                        <MessageBubble role="user" content={turn.user.content} />
-                                    )}
-                                    {turn.bots.map((botMsg: any, i: number) => {
-                                        const isBotLoading = isLoading && isLastTurn && i === turn.bots.length - 1 && botMsg.content === '';
-                                        return (
-                                            <MessageBubble
-                                                key={i}
-                                                role="bot"
-                                                content={botMsg.content}
-                                                isLoading={isBotLoading}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            );
-                        })}
-                        {/* Bottom spacer */}
-                        <div ref={messagesEndRef} className="h-[150px] w-full shrink-0" />
-                    </div>
+                    <>
+                        {/* Title above messages */}
+                        <div className="w-full pt-8 pb-4 text-center">
+                            <h2 className="text-2xl font-bold text-charcoal-800 tracking-tight"
+                                style={{ fontFamily: 'Playfair Display, serif' }}>
+                                Current Chat
+                            </h2>
+                        </div>
+                        <div
+                            className="w-full px-4 sm:px-6 flex flex-col mx-auto pb-4"
+                            style={{ maxWidth: 720 }}
+                        >
+                            {groupedTurns.map((turn, index) => {
+                                const isLastTurn = index === groupedTurns.length - 1;
+                                return (
+                                    <div
+                                        key={index}
+                                        className="flex flex-col w-full"
+                                        style={{ minHeight: isLastTurn ? 'calc(100vh - 200px)' : 'auto' }}
+                                    >
+                                        {turn.user && (
+                                            <MessageBubble role="user" content={turn.user.content} />
+                                        )}
+                                        {turn.bots.map((botMsg: any, i: number) => {
+                                            const isBotLoading = isLoading && isLastTurn && i === turn.bots.length - 1 && botMsg.content === '';
+                                            return (
+                                                <MessageBubble
+                                                    key={i}
+                                                    role="bot"
+                                                    content={botMsg.content}
+                                                    isLoading={isBotLoading}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                );
+                            })}
+                            {/* Bottom spacer */}
+                            <div ref={messagesEndRef} className="h-[150px] w-full shrink-0" />
+                        </div>
+                    </>
                 )}
             </div>
 
@@ -400,7 +423,7 @@ const BotUI = ({ messages, setMessages, paddlers, setPaddlers }: BotUIProps) => 
             {hasMessages && (
                 <div style={{
                     flexShrink: 0,
-                    padding: isSmallScreen ? '8px 12px 16px' : '8px 24px 32px',
+                    padding: isSmallScreen ? '8px 12px 16px' : '8px 24px 24px',
                     width: '100%',
                     display: 'flex',
                     flexDirection: 'column',
@@ -412,14 +435,26 @@ const BotUI = ({ messages, setMessages, paddlers, setPaddlers }: BotUIProps) => 
                     right: 0,
                     zIndex: 10
                 }}>
-                    <div style={{ width: '100%', maxWidth: isLargeScreen ? 600 : 420 }}>
+                    {/* Suggestion chips row */}
+                    <div className="flex flex-wrap justify-center gap-2 mb-3 max-w-2xl">
+                        {SUGGESTIONS.map((q, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setInput(q)}
+                                className="px-3 py-1.5 rounded-full text-[11px] font-medium border border-black/[0.06] text-warmgray-400 hover:text-charcoal-700 hover:border-sage-400/40 hover:bg-white transition-all"
+                            >
+                                {q}
+                            </button>
+                        ))}
+                    </div>
+                    <div style={{ width: '100%', maxWidth: 720 }}>
                         {renderInput(false)}
                     </div>
                     <p style={{
                         textAlign: 'center',
-                        fontSize: 8,
+                        fontSize: 10,
                         color: '#BCBCBC',
-                        marginTop: 8,
+                        marginTop: 10,
                         userSelect: 'none',
                     }}>
                         Powered by Gemini · True Grit 2026 Performance Data

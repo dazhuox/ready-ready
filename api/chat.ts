@@ -2,28 +2,36 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createChatbotContext } from '../src/data/gemini';
 import paddlersData from '../src/data/paddlers.json';
 
-// Vercel Serverless Function — keeps the API key server-side
-export default async function handler(req: any, res: any) {
+// Use Edge Runtime for better streaming support and fewer cold start issues on Vercel
+export const config = {
+  runtime: 'edge'
+};
+
+export default async function handler(req: Request) {
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    // Support both in case the Vercel environment variable has VITE_ prefix
+    const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
     if (!apiKey) {
-        return res.status(500).json({ error: 'API key not configured on server' });
+        return new Response(JSON.stringify({ error: 'API key not configured on server' }), { status: 500 });
     }
 
-    const { prompt, history } = req.body;
+    let prompt = '';
+    let history = [];
+
+    try {
+        const body = await req.json();
+        prompt = body.prompt;
+        history = body.history;
+    } catch {
+        return new Response(JSON.stringify({ error: 'Invalid JSON body' }), { status: 400 });
+    }
 
     if (!prompt) {
-        return res.status(400).json({ error: 'Prompt is required' });
+        return new Response(JSON.stringify({ error: 'Prompt is required' }), { status: 400 });
     }
-
-    // Set up Server-Sent Events for streaming
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache, no-transform');
-    res.setHeader('Connection', 'keep-alive');
-    res.setHeader('X-Accel-Buffering', 'no');
 
     try {
         const genAI = new GoogleGenerativeAI(apiKey);
@@ -43,18 +51,37 @@ export default async function handler(req: any, res: any) {
         const chat = model.startChat({ history: contents });
         const result = await chat.sendMessageStream(prompt);
 
-        for await (const chunk of result.stream) {
-            const text = chunk.text();
-            if (text) {
-                res.write(`data: ${JSON.stringify({ text })}\n\n`);
+        // Convert the async iterable to a Web ReadableStream for Edge
+        const stream = new ReadableStream({
+            async start(controller) {
+                const encoder = new TextEncoder();
+                try {
+                    for await (const chunk of result.stream) {
+                        const text = chunk.text();
+                        if (text) {
+                            controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text })}\n\n`));
+                        }
+                    }
+                    controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+                } catch (err: any) {
+                    console.error('Streaming error:', err);
+                    controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: err.message || 'Error generating output' })}\n\n`));
+                } finally {
+                    controller.close();
+                }
             }
-        }
+        });
 
-        res.write('data: [DONE]\n\n');
-        res.end();
+        return new Response(stream, {
+            headers: {
+                'Content-Type': 'text/event-stream',
+                'Cache-Control': 'no-cache, no-transform',
+                'Connection': 'keep-alive',
+                'X-Accel-Buffering': 'no'
+            }
+        });
     } catch (error: any) {
         console.error('Gemini API error:', error);
-        res.write(`data: ${JSON.stringify({ error: error.message || 'Failed to generate response' })}\n\n`);
-        res.end();
+        return new Response(JSON.stringify({ error: error.message || 'Failed to generate response' }), { status: 500 });
     }
 }
